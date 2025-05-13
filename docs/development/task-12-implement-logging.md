@@ -1,78 +1,78 @@
-# Task #12: Implementar Logging e Rastreamento de Requisições
+# Task #12: Implement Logging and Request Tracking
 
-## Propósito e Escopo
-O propósito desta tarefa foi implementar um sistema abrangente de logging e rastreamento de requisições para monitorar e depurar a API eficientemente. O sistema registra informações detalhadas sobre requisições recebidas, respostas enviadas e erros que ocorrem durante o processamento, facilitando a identificação e resolução de problemas em ambiente de desenvolvimento e produção.
+## Purpose and Scope
+The purpose of this task was to implement a comprehensive logging and request tracking system to efficiently monitor and debug the API. The system records detailed information about received requests, sent responses, and errors that occur during processing, facilitating the identification and resolution of problems in both development and production environments.
 
-## Arquitetura Técnica e Decisões de Design
-A implementação do sistema de logging segue uma abordagem de múltiplas camadas que combina logging estruturado com rastreamento de requisições. As decisões de design incluem:
+## Technical Architecture and Design Decisions
+The logging system implementation follows a multi-layered approach that combines structured logging with request tracking. Design decisions include:
 
-1. **Utilização do Winston**: Biblioteca escolhida por sua flexibilidade e suporte a múltiplos transportes de log
-2. **Integração com Morgan**: Para logging específico de requisições HTTP com formato personalizado
-3. **IDs de Requisição**: Implementação de identificadores únicos para cada requisição para facilitar o rastreamento através do fluxo de processamento
-4. **Múltiplos Destinos de Log**: Configuração para registrar logs tanto no console quanto em arquivos, com níveis de severidade diferentes
-5. **Formato Consistente**: Padronização do formato de logs com timestamps e níveis de severidade claros
+1. **Use of Winston**: Library chosen for its flexibility and support for multiple log transports
+2. **Integration with Morgan**: For HTTP request-specific logging with custom format
+3. **Request IDs**: Implementation of unique identifiers for each request to facilitate tracking through the processing flow
+4. **Multiple Log Destinations**: Configuration to log both to console and files, with different severity levels
+5. **Consistent Format**: Standardization of log format with clear timestamps and severity levels
 
-## Detalhes de Implementação
+## Implementation Details
 
-### Estrutura de Código
-A implementação de logging está organizada nos seguintes arquivos:
-- `src/utils/logger.ts`: Configuração central do Winston para logging geral
-- `src/middleware/requestLogger.ts`: Middleware para logging de requisições HTTP e gerenciamento de IDs de requisição
+### Code Structure
+The logging implementation is organized in the following files:
+- `src/utils/logger.ts`: Central Winston configuration for general logging
+- `src/middleware/requestLogger.ts`: Middleware for HTTP request logging and request ID management
 
-### Padrões Utilizados
-1. **Middleware Pattern**: Utilizado para interceptar requisições e registrar informações relevantes
-2. **Singleton Pattern**: Logger configurado como uma instância única compartilhada por toda a aplicação
-3. **Decorator Pattern**: Estende a funcionalidade de requisições e respostas com informações de rastreamento
+### Patterns Used
+1. **Middleware Pattern**: Used to intercept requests and record relevant information
+2. **Singleton Pattern**: Logger configured as a single instance shared throughout the application
+3. **Decorator Pattern**: Extends the functionality of requests and responses with tracking information
 
-### Algoritmos e Lógica Principal
-A lógica principal de logging inclui:
-1. Geração de IDs únicos para cada requisição recebida
-2. Formatação personalizada de logs com informações relevantes (método HTTP, URL, status, tempo de resposta)
-3. Registro de corpo da requisição para facilitar a depuração
-4. Propagação do ID da requisição para os cabeçalhos de resposta
-5. Diferentes níveis de log baseados no ambiente (produção vs. desenvolvimento)
+### Main Algorithms and Logic
+The main logging logic includes:
+1. Generation of unique IDs for each received request
+2. Custom log formatting with relevant information (HTTP method, URL, status, response time)
+3. Request body logging to facilitate debugging
+4. Propagation of request ID to response headers
+5. Different log levels based on environment (production vs. development)
 
-## Dependências
+## Dependencies
 
-### Componentes Internos
-- **Express Application**: Para registro de middleware de logging
+### Internal Components
+- **Express Application**: For registering logging middleware
 
-### Sistemas Externos
-- **winston**: Biblioteca principal de logging
-- **morgan**: Middleware de logging HTTP para Express
-- **Sistema de arquivos**: Para armazenamento de logs em arquivos
+### External Systems
+- **winston**: Main logging library
+- **morgan**: HTTP logging middleware for Express
+- **File system**: For storing logs in files
 
-## Requisitos de Configuração
+## Configuration Requirements
 
-### Variáveis de Ambiente
-- `NODE_ENV`: Define o nível de logging (produção = 'info', desenvolvimento = 'debug')
+### Environment Variables
+- `NODE_ENV`: Defines the logging level (production = 'info', development = 'debug')
 
-### Configuração de Aplicativo
-Os logs são armazenados nos seguintes locais:
-- `logs/combined.log`: Todos os logs
-- `logs/error.log`: Apenas logs de erro
-- Console: Todos os logs (útil para desenvolvimento)
+### Application Configuration
+Logs are stored in the following locations:
+- `logs/combined.log`: All logs
+- `logs/error.log`: Error logs only
+- Console: All logs (useful for development)
 
-## Limitações Conhecidas
-1. Não há rotação automática de arquivos de log, o que pode causar arquivos muito grandes em produção
-2. O corpo da requisição é registrado integralmente, o que pode expor dados sensíveis
-3. Não há integração com serviços de monitoramento de logs externos
-4. O armazenamento local de logs pode ser perdido em ambientes de containers efêmeros
+## Known Limitations
+1. There is no automatic log file rotation, which can cause very large files in production
+2. The request body is logged in full, which may expose sensitive data
+3. There is no integration with external log monitoring services
+4. Local log storage may be lost in ephemeral container environments
 
-## Melhorias Futuras Potenciais
-1. Implementar rotação de logs baseada em tamanho ou tempo
-2. Adicionar mascaramento de dados sensíveis nos logs (senhas, tokens, etc.)
-3. Integrar com serviços de monitoramento como ELK Stack, Datadog ou New Relic
-4. Adicionar métricas de performance para monitoramento em tempo real
-5. Implementar logs estruturados em formato JSON para facilitar a análise
+## Potential Future Improvements
+1. Implement log rotation based on size or time
+2. Add masking of sensitive data in logs (passwords, tokens, etc.)
+3. Integrate with monitoring services such as ELK Stack, Datadog, or New Relic
+4. Add performance metrics for real-time monitoring
+5. Implement structured logs in JSON format to facilitate analysis
 
-## Exemplos de Código e Padrões de Uso
+## Code Examples and Usage Patterns
 
-### Configuração do Logger Winston
+### Winston Logger Configuration
 ```typescript
 import winston from 'winston';
 
-// Definir formato do log
+// Define log format
 const logFormat = winston.format.combine(
   winston.format.timestamp(),
   winston.format.printf(({ level, message, timestamp }) => {
@@ -80,16 +80,16 @@ const logFormat = winston.format.combine(
   })
 );
 
-// Criar instância do logger
+// Create logger instance
 const logger = winston.createLogger({
   level: process.env.NODE_ENV === 'production' ? 'info' : 'debug',
   format: logFormat,
   transports: [
-    // Transporte para console em todos os ambientes
+    // Console transport for all environments
     new winston.transports.Console(),
-    // Transporte para arquivo de erros
+    // File transport for errors
     new winston.transports.File({ filename: 'logs/error.log', level: 'error' }),
-    // Transporte para todos os logs
+    // File transport for all logs
     new winston.transports.File({ filename: 'logs/combined.log' })
   ],
 });
@@ -97,22 +97,22 @@ const logger = winston.createLogger({
 export default logger;
 ```
 
-### Middleware de Logging de Requisições
+### Request Logging Middleware
 ```typescript
 import morgan from 'morgan';
 import { Request, Response } from 'express';
 import logger from '../utils/logger';
 
-// Criar um token personalizado para o ID da requisição
+// Create a custom token for request ID
 morgan.token('request-id', (req: Request) => {
-  // Gerar um ID único para a requisição se não estiver presente
+  // Generate a unique ID for the request if not present
   if (!req.headers['x-request-id']) {
     req.headers['x-request-id'] = `${Date.now()}-${Math.random().toString(36).substring(2, 15)}`;
   }
   return req.headers['x-request-id'] as string;
 });
 
-// Criar um token personalizado para o body da requisição
+// Create a custom token for request body
 morgan.token('request-body', (req: Request) => {
   try {
     return JSON.stringify(req.body) || '-';
@@ -121,52 +121,52 @@ morgan.token('request-body', (req: Request) => {
   }
 });
 
-// Criar um formato personalizado que inclui o ID da requisição e o body
+// Create a custom format that includes request ID and body
 const logFormat = ':request-id :method :url :status :res[content-length] - :response-time ms - body: :request-body';
 
-// Criar um objeto stream que escreve no nosso logger Winston
+// Create a stream object that writes to our Winston logger
 const stream = {
   write: (message: string) => {
     logger.info(message.trim());
   },
 };
 
-// Exportar o middleware
+// Export the middleware
 export const requestLogger = morgan(logFormat, { stream });
 ```
 
-### Uso do Logger na Aplicação
+### Logger Usage in Application
 ```typescript
 import logger from '../utils/logger';
 
-// Exemplo de uso em controladores ou serviços
+// Example usage in controllers or services
 try {
-  // Alguma operação
-  logger.info(`Operação realizada com sucesso: ${resultado}`);
+  // Some operation
+  logger.info(`Operation completed successfully: ${result}`);
 } catch (error) {
-  logger.error(`Erro ao realizar operação: ${error.message}`, { error });
+  logger.error(`Error performing operation: ${error.message}`, { error });
   throw error;
 }
 ```
 
-## Guia de Solução de Problemas
+## Troubleshooting Guide
 
-### Problema 1: Arquivos de log não estão sendo criados
-**Sintomas:**
-- Logs aparecem no console mas não nos arquivos
-- Erro ao iniciar a aplicação relacionado a permissões de arquivo
+### Problem 1: Log files are not being created
+**Symptoms:**
+- Logs appear in the console but not in files
+- Error when starting the application related to file permissions
 
-**Solução:**
-1. Verifique se o diretório `logs/` existe e tem permissões de escrita
-2. Crie o diretório manualmente se necessário: `mkdir logs`
-3. Verifique as permissões do usuário que executa a aplicação
+**Solution:**
+1. Check if the `logs/` directory exists and has write permissions
+2. Create the directory manually if necessary: `mkdir logs`
+3. Check the permissions of the user running the application
 
-### Problema 2: IDs de requisição não estão sendo propagados
-**Sintomas:**
-- Logs não mostram o mesmo ID para diferentes partes do fluxo de uma requisição
-- Cabeçalho `X-Request-ID` não aparece nas respostas
+### Problem 2: Request IDs are not being propagated
+**Symptoms:**
+- Logs don't show the same ID for different parts of a request flow
+- `X-Request-ID` header doesn't appear in responses
 
-**Solução:**
-1. Verifique se o middleware `addRequestId` está sendo registrado antes de outros middlewares
-2. Confira se o middleware está sendo aplicado a todas as rotas necessárias
-3. Verifique se não há outro middleware sobrescrevendo os cabeçalhos
+**Solution:**
+1. Check if the `addRequestId` middleware is registered before other middlewares
+2. Verify if the middleware is being applied to all necessary routes
+3. Check if there's no other middleware overwriting the headers

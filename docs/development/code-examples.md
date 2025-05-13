@@ -1,70 +1,70 @@
-# Exemplos de Código e Padrões de Uso
+# Code Examples and Usage Patterns
 
-Este documento apresenta exemplos detalhados de como usar a API de gerenciamento de usuários de diferentes maneiras, incluindo exemplos de código para consumir os endpoints, padrões comuns e boas práticas.
+This document presents detailed examples of how to use the user management API in different ways, including code examples for consuming endpoints, common patterns, and best practices.
 
-## Consumindo a API com Diferentes Ferramentas
+## Consuming the API with Different Tools
 
-### Usando Curl
+### Using Curl
 
-#### Listar Todos os Usuários
+#### List All Users
 ```bash
 curl -X GET http://localhost:3000/api/users
 ```
 
-#### Buscar Usuário por ID
+#### Get User by ID
 ```bash
 curl -X GET http://localhost:3000/api/users/1
 ```
 
-#### Criar Novo Usuário
+#### Create New User
 ```bash
 curl -X POST http://localhost:3000/api/users \
   -H "Content-Type: application/json" \
   -d '{"name": "Maria Silva", "email": "maria@exemplo.com"}'
 ```
 
-#### Atualizar Usuário
+#### Update User
 ```bash
 curl -X PUT http://localhost:3000/api/users/1 \
   -H "Content-Type: application/json" \
   -d '{"name": "Maria Silva Atualizada"}'
 ```
 
-#### Excluir Usuário
+#### Delete User
 ```bash
 curl -X DELETE http://localhost:3000/api/users/1
 ```
 
-### Usando JavaScript/Fetch
+### Using JavaScript/Fetch
 
 ```javascript
-// Listar todos os usuários
+// List all users
 async function getAllUsers() {
   try {
     const response = await fetch('http://localhost:3000/api/users');
-    if (!response.ok) throw new Error(`Erro: ${response.status}`);
+    if (!response.ok) throw new Error(`Error: ${response.status}`);
     const users = await response.json();
-    console.log('Usuários:', users);
+    console.log('Users:', users);
     return users;
   } catch (error) {
-    console.error('Falha ao buscar usuários:', error);
+    console.error('Failed to fetch users:', error);
   }
 }
 
-// Buscar usuário por ID
+// Get user by ID
 async function getUserById(id) {
   try {
     const response = await fetch(`http://localhost:3000/api/users/${id}`);
-    if (!response.ok) throw new Error(`Erro: ${response.status}`);
+    if (!response.ok) throw new Error(`Error: ${response.status}`);
     const user = await response.json();
-    console.log('Usuário:', user);
+    console.log('User:', user);
     return user;
   } catch (error) {
-    console.error(`Falha ao buscar usuário ${id}:`, error);
+    console.error(`Failed to fetch user ${id}:`, error);
   }
 }
 
-// Criar novo usuário
+// Create new user
 async function createUser(userData) {
   try {
     const response = await fetch('http://localhost:3000/api/users', {
@@ -74,16 +74,16 @@ async function createUser(userData) {
       },
       body: JSON.stringify(userData),
     });
-    if (!response.ok) throw new Error(`Erro: ${response.status}`);
+    if (!response.ok) throw new Error(`Error: ${response.status}`);
     const newUser = await response.json();
-    console.log('Usuário criado:', newUser);
+    console.log('User created:', newUser);
     return newUser;
   } catch (error) {
-    console.error('Falha ao criar usuário:', error);
+    console.error('Failed to create user:', error);
   }
 }
 
-// Atualizar usuário
+// Update user
 async function updateUser(id, userData) {
   try {
     const response = await fetch(`http://localhost:3000/api/users/${id}`, {
@@ -93,36 +93,36 @@ async function updateUser(id, userData) {
       },
       body: JSON.stringify(userData),
     });
-    if (!response.ok) throw new Error(`Erro: ${response.status}`);
+    if (!response.ok) throw new Error(`Error: ${response.status}`);
     const updatedUser = await response.json();
-    console.log('Usuário atualizado:', updatedUser);
+    console.log('User updated:', updatedUser);
     return updatedUser;
   } catch (error) {
-    console.error(`Falha ao atualizar usuário ${id}:`, error);
+    console.error(`Failed to update user ${id}:`, error);
   }
 }
 
-// Excluir usuário
+// Delete user
 async function deleteUser(id) {
   try {
     const response = await fetch(`http://localhost:3000/api/users/${id}`, {
       method: 'DELETE',
     });
-    if (!response.ok) throw new Error(`Erro: ${response.status}`);
-    console.log(`Usuário ${id} excluído com sucesso`);
+    if (!response.ok) throw new Error(`Error: ${response.status}`);
+    console.log(`User ${id} successfully deleted`);
     return true;
   } catch (error) {
-    console.error(`Falha ao excluir usuário ${id}:`, error);
+    console.error(`Failed to delete user ${id}:`, error);
     return false;
   }
 }
 ```
 
-### Usando Axios (Node.js/JavaScript)
+### Using Axios (Node.js/JavaScript)
 
 ```javascript
 const axios = require('axios');
-// ou import axios from 'axios';
+// or import axios from 'axios';
 
 const api = axios.create({
   baseURL: 'http://localhost:3000/api',
@@ -132,68 +132,68 @@ const api = axios.create({
   },
 });
 
-// Listar todos os usuários
+// List all users
 async function getAllUsers() {
   try {
     const response = await api.get('/users');
-    console.log('Usuários:', response.data);
+    console.log('Users:', response.data);
     return response.data;
   } catch (error) {
-    console.error('Erro ao buscar usuários:', error.response?.data || error.message);
+    console.error('Error fetching users:', error.response?.data || error.message);
     throw error;
   }
 }
 
-// Buscar usuário por ID
+// Get user by ID
 async function getUserById(id) {
   try {
     const response = await api.get(`/users/${id}`);
-    console.log('Usuário:', response.data);
+    console.log('User:', response.data);
     return response.data;
   } catch (error) {
-    console.error(`Erro ao buscar usuário ${id}:`, error.response?.data || error.message);
+    console.error(`Error fetching user ${id}:`, error.response?.data || error.message);
     throw error;
   }
 }
 
-// Criar novo usuário
+// Create new user
 async function createUser(userData) {
   try {
     const response = await api.post('/users', userData);
-    console.log('Usuário criado:', response.data);
+    console.log('User created:', response.data);
     return response.data;
   } catch (error) {
-    console.error('Erro ao criar usuário:', error.response?.data || error.message);
+    console.error('Error creating user:', error.response?.data || error.message);
     throw error;
   }
 }
 
-// Atualizar usuário
+// Update user
 async function updateUser(id, userData) {
   try {
     const response = await api.put(`/users/${id}`, userData);
-    console.log('Usuário atualizado:', response.data);
+    console.log('User updated:', response.data);
     return response.data;
   } catch (error) {
-    console.error(`Erro ao atualizar usuário ${id}:`, error.response?.data || error.message);
+    console.error(`Error updating user ${id}:`, error.response?.data || error.message);
     throw error;
   }
 }
 
-// Excluir usuário
+// Delete user
 async function deleteUser(id) {
   try {
     await api.delete(`/users/${id}`);
-    console.log(`Usuário ${id} excluído com sucesso`);
+    console.log(`User ${id} successfully deleted`);
     return true;
   } catch (error) {
-    console.error(`Erro ao excluir usuário ${id}:`, error.response?.data || error.message);
+    console.error(`Error deleting user ${id}:`, error.response?.data || error.message);
     throw error;
   }
 }
 ```
 
-### Usando Java com HttpClient (Java 11+)
+### Using Java with HttpClient (Java 11+)
 
 ```java
 import java.net.URI;
@@ -272,9 +272,9 @@ public class UserApiClient {
 }
 ```
 
-## Tratamento de Erros e Boas Práticas
+## Error Handling and Best Practices
 
-### Tratamento de Erros Adequado
+### Adequate Error Handling
 
 ```javascript
 async function fetchUserWithErrorHandling(id) {
@@ -283,21 +283,21 @@ async function fetchUserWithErrorHandling(id) {
 
     // Verificar código de status
     if (response.status === 404) {
-      console.warn(`Usuário com ID ${id} não encontrado`);
+      console.warn(`User with ID ${id} not found`);
       return null;
     } else if (!response.ok) {
       // Ler o corpo do erro
       const errorData = await response.json();
-      throw new Error(`Erro ${response.status}: ${errorData.message}`);
+      throw new Error(`Error ${response.status}: ${errorData.message}`);
     }
 
     return await response.json();
   } catch (error) {
     // Lidar com erros de rede
     if (error.name === 'TypeError' && error.message.includes('network')) {
-      console.error('Erro de conexão. Verifique se o servidor está em execução.');
+      console.error('Connection error. Check if the server is running.');
     } else {
-      console.error(`Erro ao buscar usuário: ${error.message}`);
+      console.error(`Error fetching user: ${error.message}`);
     }
 
     // Retornar null ou reemitir o erro dependendo do caso de uso

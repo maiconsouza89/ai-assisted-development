@@ -1,92 +1,92 @@
-# Task #10: Implementar Testes de Integração
+# Task #10: Implement Integration Tests
 
-## Propósito e Escopo
-O propósito desta tarefa foi implementar testes de integração abrangentes para verificar o ciclo completo de requisição-resposta em todos os endpoints da API. Os testes verificam se os componentes do sistema (middlewares, controladores, modelos) trabalham juntos corretamente para processar as requisições HTTP e gerar as respostas apropriadas.
+## Purpose and Scope
+The purpose of this task was to implement comprehensive integration tests to verify the complete request-response cycle across all API endpoints. The tests verify whether the system components (middlewares, controllers, models) work together correctly to process HTTP requests and generate appropriate responses.
 
-## Arquitetura Técnica e Decisões de Design
-A implementação dos testes de integração segue uma abordagem que testa a aplicação como um todo, simulando requisições HTTP reais e avaliando as respostas. Decisões importantes incluem:
+## Technical Architecture and Design Decisions
+The implementation of integration tests follows an approach that tests the application as a whole, simulating real HTTP requests and evaluating responses. Important decisions include:
 
-1. **Uso do Supertest**: Biblioteca escolhida para simular requisições HTTP sem necessidade de iniciar um servidor
-2. **Isolamento de Testes**: Cada teste limpa o estado do armazenamento para garantir isolamento e reprodutibilidade
-3. **Testes de Fluxo Completo**: Verificação do caminho completo, da validação até a manipulação de erros
-4. **Mocking Estratégico**: Mock de componentes específicos quando necessário para isolamento de testes
+1. **Use of Supertest**: Library chosen to simulate HTTP requests without the need to start a server
+2. **Test Isolation**: Each test cleans the storage state to ensure isolation and reproducibility
+3. **Complete Flow Tests**: Verification of the complete path, from validation to error handling
+4. **Strategic Mocking**: Mocking of specific components when necessary for test isolation
 
-### Diagrama de Arquitetura
+### Architecture Diagram
 ```
-Cliente (Supertest) -> Express App -> Middlewares -> Controladores -> Modelos -> Resposta
+Client (Supertest) -> Express App -> Middlewares -> Controllers -> Models -> Response
 ```
 
-## Detalhes de Implementação
+## Implementation Details
 
-### Estrutura de Código
-Os testes de integração estão organizados nos seguintes arquivos:
-- `src/__tests__/integration/api.test.ts`: Testes para operações CRUD básicas em todos os endpoints
-- `src/__tests__/integration/validation.test.ts`: Testes focados na integração entre middlewares de validação e controladores
+### Code Structure
+Integration tests are organized in the following files:
+- `src/__tests__/integration/api.test.ts`: Tests for basic CRUD operations on all endpoints
+- `src/__tests__/integration/validation.test.ts`: Tests focused on the integration between validation middlewares and controllers
 
-### Padrões Utilizados
-1. **Padrão AAA (Arrange-Act-Assert)**:
-   - **Arrange**: Configuração dos dados de teste e estado inicial
-   - **Act**: Execução da operação (requisição HTTP)
-   - **Assert**: Verificação dos resultados e estado final
+### Patterns Used
+1. **AAA Pattern (Arrange-Act-Assert)**:
+   - **Arrange**: Setting up test data and initial state
+   - **Act**: Executing the operation (HTTP request)
+   - **Assert**: Verifying results and final state
 
-2. **Hooks de Lifecycle do Jest**:
-   - `beforeEach`: Configuração de um estado limpo antes de cada teste
-   - `describe`: Agrupamento lógico de testes relacionados
+2. **Jest Lifecycle Hooks**:
+   - `beforeEach`: Setting up a clean state before each test
+   - `describe`: Logical grouping of related tests
 
-### Algoritmos e Lógica Principal
-A lógica principal dos testes inclui:
-1. Limpeza do armazenamento de usuários (`UserStore`) antes de cada teste
-2. Simulação de requisições HTTP utilizando o Supertest
-3. Verificação de respostas HTTP, incluindo códigos de status e corpos de resposta
-4. Validação do estado final do armazenamento após operações
+### Main Algorithms and Logic
+The main logic of the tests includes:
+1. Cleaning the user storage (`UserStore`) before each test
+2. Simulation of HTTP requests using Supertest
+3. Verification of HTTP responses, including status codes and response bodies
+4. Validation of the final storage state after operations
 
-## Dependências
+## Dependencies
 
-### Componentes Internos
-- **Express App**: Aplicação Express configurada em `app.ts`
-- **UserStore**: Modelo para manipulação de dados de usuários
-- **Middleware de Validação**: Middleware para validação de entradas
-- **Middleware de Tratamento de Erros**: Middleware para lidar com erros da API
+### Internal Components
+- **Express App**: Express application configured in `app.ts`
+- **UserStore**: Model for user data manipulation
+- **Validation Middleware**: Middleware for input validation
+- **Error Handling Middleware**: Middleware for handling API errors
 
-### Sistemas Externos
-- **supertest**: Biblioteca para simular requisições HTTP
-- **jest**: Framework de testes
+### External Systems
+- **supertest**: Library for simulating HTTP requests
+- **jest**: Testing framework
 
-## Requisitos de Configuração
+## Configuration Requirements
 
-### Variáveis de Ambiente
-Não são necessárias variáveis de ambiente específicas para os testes de integração.
+### Environment Variables
+No specific environment variables are needed for integration tests.
 
-### Configuração de Aplicativo
-Para executar os testes, basta executar o comando `npm test` que está configurado no `package.json` para executar os testes com Jest.
+### Application Configuration
+To run the tests, simply execute the `npm test` command which is configured in `package.json` to run tests with Jest.
 
-## Limitações Conhecidas
-1. Os testes usam um armazenamento em memória, que é reiniciado entre os testes, portanto não testam persistência real de dados
-2. Não há testes de concorrência ou desempenho
-3. Não são testados cenários de falha de rede ou timeout
+## Known Limitations
+1. Tests use in-memory storage, which is reset between tests, therefore they don't test real data persistence
+2. There are no concurrency or performance tests
+3. Network failure or timeout scenarios are not tested
 
-## Melhorias Futuras Potenciais
-1. Adicionar testes para cenários de carga e concorrência
-2. Implementar testes end-to-end com um banco de dados real
-3. Adicionar testes para novas funcionalidades como paginação, filtragem e ordenação
-4. Implementar testes de segurança para validar proteção contra ataques comuns
+## Potential Future Improvements
+1. Add tests for load and concurrency scenarios
+2. Implement end-to-end tests with a real database
+3. Add tests for new features such as pagination, filtering, and sorting
+4. Implement security tests to validate protection against common attacks
 
-## Exemplos de Código e Padrões de Uso
+## Code Examples and Usage Patterns
 
-### Exemplo de Teste de GET
+### Example of GET Test
 ```typescript
 describe('GET /api/users', () => {
-  it('deve retornar um array vazio quando não existem usuários', async () => {
+  it('should return an empty array when no users exist', async () => {
     const response = await request(app).get('/api/users');
 
     expect(response.status).toBe(200);
     expect(response.body).toEqual([]);
   });
 
-  it('deve retornar todos os usuários', async () => {
-    // Criar usuários de teste
-    const user1 = UserStore.create({ name: 'João Silva', email: 'joao@exemplo.com' });
-    const user2 = UserStore.create({ name: 'Maria Santos', email: 'maria@exemplo.com' });
+  it('should return all users', async () => {
+    // Create test users
+    const user1 = UserStore.create({ name: 'John Smith', email: 'john@example.com' });
+    const user2 = UserStore.create({ name: 'Mary Johnson', email: 'mary@example.com' });
 
     const response = await request(app).get('/api/users');
 
@@ -100,51 +100,51 @@ describe('GET /api/users', () => {
 });
 ```
 
-### Exemplo de Teste de Validação
+### Example of Validation Test
 ```typescript
-it('deve parar o fluxo quando há erro de dados inválidos', () => {
+it('should stop the flow when there is an invalid data error', () => {
   mockRequest.method = 'PUT';
   mockRequest.params = { id: '123' };
-  mockRequest.body = {}; // Sem campos para atualização
+  mockRequest.body = {}; // No fields for update
 
-  // Primeiro middleware passa
+  // First middleware passes
   validateIdParam(mockRequest as Request, mockResponse as Response, nextFunction);
-  expect(nextFunction).toHaveBeenCalledWith(); // Sem erro
+  expect(nextFunction).toHaveBeenCalledWith(); // No error
 
   jest.clearAllMocks();
   responseStatus.mockReturnValue(mockResponse);
 
-  // Segundo middleware falha
+  // Second middleware fails
   validateUserInput(mockRequest as Request, mockResponse as Response, nextFunction);
   expect(nextFunction).toHaveBeenCalledWith(expect.any(ApiError));
   expect(responseStatus).toHaveBeenCalledWith(400);
   expect(responseJson).toHaveBeenCalledWith(expect.objectContaining({
-    message: expect.stringContaining('Pelo menos um campo (nome ou email) é necessário para atualização')
+    message: expect.stringContaining('At least one field (name or email) is required for update')
   }));
 
-  // Garantir que o controller não é chamado
+  // Ensure the controller is not called
   expect(UserStore.update).not.toHaveBeenCalled();
 });
 ```
 
-## Guia de Solução de Problemas
+## Troubleshooting Guide
 
-### Problema 1: Falhas em testes específicos
-**Sintomas:**
-- Testes falham com erros de comparação de resultados esperados
-- Falhas ocorrem apenas em testes específicos
+### Problem 1: Failures in specific tests
+**Symptoms:**
+- Tests fail with errors comparing expected results
+- Failures occur only in specific tests
 
-**Solução:**
-1. Verifique se o `beforeEach` está limpando corretamente o estado
-2. Verifique se os testes anteriores não estão afetando o estado global
-3. Isole o teste específico com `it.only()` para depuração
+**Solution:**
+1. Check if `beforeEach` is properly cleaning the state
+2. Verify if previous tests are not affecting the global state
+3. Isolate the specific test with `it.only()` for debugging
 
-### Problema 2: Falhas intermitentes em testes
-**Sintomas:**
-- Testes passam algumas vezes e falham outras
-- Erros de timeout ou condições de corrida
+### Problem 2: Intermittent test failures
+**Symptoms:**
+- Tests pass sometimes and fail other times
+- Timeout errors or race conditions
 
-**Solução:**
-1. Aumente o timeout dos testes com `jest.setTimeout()`
-2. Verifique operações assíncronas e garanta que estão sendo aguardadas corretamente
-3. Refatore o teste para evitar condições de corrida ou dependências de tempo
+**Solution:**
+1. Increase test timeout with `jest.setTimeout()`
+2. Check asynchronous operations and ensure they are properly awaited
+3. Refactor the test to avoid race conditions or time dependencies

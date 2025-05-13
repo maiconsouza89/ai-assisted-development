@@ -1,71 +1,71 @@
-# Task #XX: Título da Tarefa
+# Task #XX: Task Title
 
-## Propósito e Escopo
-*Descreva o propósito geral e o escopo da tarefa aqui. Explique o que a tarefa visa realizar e por quê.*
+## Purpose and Scope
+*Describe the general purpose and scope of the task here. Explain what the task aims to accomplish and why.*
 
-## Arquitetura Técnica e Decisões de Design
-*Descreva a arquitetura técnica e as decisões de design tomadas durante a implementação desta tarefa.*
+## Technical Architecture and Design Decisions
+*Describe the technical architecture and design decisions made during the implementation of this task.*
 
-### Diagrama de Arquitetura (se aplicável)
-*Inclua diagramas de arquitetura quando aplicável para ilustrar o design.*
+### Architecture Diagram (if applicable)
+*Include architecture diagrams when applicable to illustrate the design.*
 
-## Detalhes de Implementação
+## Implementation Details
 
-### Estrutura de Código
-*Descreva a estrutura de código, incluindo arquivos e diretórios principais.*
+### Code Structure
+*Describe the code structure, including main files and directories.*
 
-### Padrões Utilizados
-*Descreva os padrões de design ou arquitetura utilizados.*
+### Patterns Used
+*Describe the design or architecture patterns used.*
 
-### Algoritmos e Lógica Principal
-*Descreva os algoritmos ou lógica principal implementados.*
+### Algorithms and Core Logic
+*Describe the algorithms or core logic implemented.*
 
-## Dependências
-*Liste e descreva as dependências entre componentes e sistemas externos.*
+## Dependencies
+*List and describe dependencies between components and external systems.*
 
-### Componentes Internos
-*Liste os componentes internos dos quais este depende.*
+### Internal Components
+*List the internal components this depends on.*
 
-### Sistemas Externos
-*Liste os sistemas externos dos quais este depende, se houver.*
+### External Systems
+*List the external systems this depends on, if any.*
 
-## Requisitos de Configuração
-*Descreva os requisitos de configuração e configuração do ambiente.*
+## Configuration Requirements
+*Describe the configuration requirements and environment setup.*
 
-### Variáveis de Ambiente
-*Liste as variáveis de ambiente necessárias, se houver.*
+### Environment Variables
+*List the necessary environment variables, if any.*
 
-### Configuração de Aplicativo
-*Descreva as configurações específicas da aplicação necessárias.*
+### Application Configuration
+*Describe the specific application configurations needed.*
 
-## Limitações Conhecidas
-*Liste as limitações conhecidas da implementação atual.*
+## Known Limitations
+*List the known limitations of the current implementation.*
 
-## Melhorias Futuras Potenciais
-*Sugira melhorias potenciais que poderiam ser feitas no futuro.*
+## Potential Future Improvements
+*Suggest potential improvements that could be made in the future.*
 
-## Exemplos de Código e Padrões de Uso
-*Forneça exemplos de código que mostram como usar ou interagir com os componentes implementados.*
+## Code Examples and Usage Patterns
+*Provide code examples that show how to use or interact with the implemented components.*
 
 ```typescript
-// Exemplos de código aqui
+// Code examples here
 ```
 
-## Guia de Solução de Problemas
-*Forneça um guia de solução de problemas para problemas comuns que podem surgir.*
+## Troubleshooting Guide
+*Provide a troubleshooting guide for common issues that may arise.*
 
-### Problema 1: Descrição do Problema
-**Sintomas:**
-- Sintoma 1
-- Sintoma 2
+### Issue 1: Problem Description
+**Symptoms:**
+- Symptom 1
+- Symptom 2
 
-**Solução:**
-Passos para resolver o problema.
+**Solution:**
+Steps to solve the problem.
 
-### Problema 2: Descrição do Problema
-**Sintomas:**
-- Sintoma 1
-- Sintoma 2
+### Issue 2: Problem Description
+**Symptoms:**
+- Symptom 1
+- Symptom 2
 
-**Solução:**
-Passos para resolver o problema.
+**Solution:**
+Steps to solve the problem.

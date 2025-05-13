@@ -1,18 +1,18 @@
 # Task #3: Setup Express Server Configuration
 
-## Propósito e Escopo
-O propósito desta tarefa foi configurar o servidor Express com middleware básico e tratamento de erros. Esta tarefa estabelece a estrutura fundamental da aplicação web, configurando como as requisições HTTP são processadas, como os erros são tratados e como as diferentes partes da aplicação se comunicam.
+## Purpose and Scope
+The purpose of this task was to configure the Express server with basic middleware and error handling. This task establishes the fundamental structure of the web application, configuring how HTTP requests are processed, how errors are handled, and how different parts of the application communicate.
 
-## Arquitetura Técnica e Decisões de Design
-A configuração do servidor Express segue uma arquitetura modular que facilita a manutenção e expansão. As decisões de design incluem:
+## Technical Architecture and Design Decisions
+The Express server configuration follows a modular architecture that facilitates maintenance and expansion. Design decisions include:
 
-1. **Separação entre App e Server**: Divisão entre configuração do Express (`app.ts`) e inicialização do servidor (`server.ts`) para facilitar testes
-2. **Middleware de Processamento**: Configuração de middleware para processar requisições JSON e dados de formulário
-3. **Middleware de Logging**: Implementação de logging para registrar requisições e respostas HTTP
-4. **Tratamento Global de Erros**: Middleware centralizado para tratamento consistente de erros
-5. **Documentação da API Integrada**: Configuração do Swagger/OpenAPI para documentação automática
+1. **Separation between App and Server**: Division between Express configuration (`app.ts`) and server initialization (`server.ts`) to facilitate testing
+2. **Processing Middleware**: Configuration of middleware to process JSON requests and form data
+3. **Logging Middleware**: Implementation of logging to record HTTP requests and responses
+4. **Global Error Handling**: Centralized middleware for consistent error handling
+5. **Integrated API Documentation**: Configuration of Swagger/OpenAPI for automatic documentation
 
-### Diagrama de Arquitetura
+### Architecture Diagram
 ```
                         +-------------------+
                         |     server.ts     |
@@ -36,23 +36,23 @@ A configuração do servidor Express segue uma arquitetura modular que facilita 
                         +-------------------+
 ```
 
-## Detalhes de Implementação
+## Implementation Details
 
-### Estrutura de Código
-A configuração do servidor está organizada nos seguintes arquivos:
-- `src/app.ts`: Configuração principal do Express, middleware e montagem de rotas
-- `src/server.ts`: Inicialização do servidor HTTP e configuração de porta
-- `src/middleware/errorHandler.ts`: Middleware para tratamento global de erros
-- `src/middleware/requestLogger.ts`: Middleware para logging de requisições HTTP
+### Code Structure
+The server configuration is organized in the following files:
+- `src/app.ts`: Main Express configuration, middleware, and route mounting
+- `src/server.ts`: HTTP server initialization and port configuration
+- `src/middleware/errorHandler.ts`: Middleware for global error handling
+- `src/middleware/requestLogger.ts`: Middleware for HTTP request logging
 
-### Padrões Utilizados
-1. **Middleware Chain**: Encadeamento de funções middleware para processamento de requisições
-2. **Error-First Callbacks**: Padrão para propagação e tratamento de erros em middleware
-3. **Singleton Application**: Instância única da aplicação Express compartilhada entre componentes
+### Patterns Used
+1. **Middleware Chain**: Chaining middleware functions for request processing
+2. **Error-First Callbacks**: Pattern for error propagation and handling in middleware
+3. **Singleton Application**: Single Express application instance shared between components
 
-### Componentes Principais
+### Main Components
 
-#### Configuração do Express (app.ts)
+#### Express Configuration (app.ts)
 ```typescript
 import express, { Application, Request, Response, NextFunction } from 'express';
 import userRoutes from './routes/userRoutes';
@@ -64,37 +64,37 @@ import logger from './utils/logger';
 
 const app: Application = express();
 
-// Middleware para adicionar ID de requisição e logging
+// Middleware to add request ID and logging
 app.use(addRequestId);
 app.use(requestLogger);
 
-// Middleware para processar JSON
+// Middleware to process JSON
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Documentação da API com Swagger
+// API Documentation with Swagger
 app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
-// Rota básica para teste
+// Basic route for testing
 app.get('/', (req: Request, res: Response) => {
-  logger.debug('Endpoint raiz acessado');
-  res.json({ message: 'API de Gerenciamento de Usuários funcionando!' });
+  logger.debug('Root endpoint accessed');
+  res.json({ message: 'User Management API working!' });
 });
 
-// Montando o router de usuários no caminho /api/users
-logger.info('Registrando rotas de usuário em /api/users');
+// Mounting the user router at path /api/users
+logger.info('Registering user routes at /api/users');
 app.use('/api/users', userRoutes);
 
-// Manipulador para rotas não encontradas (404)
+// Handler for routes not found (404)
 app.use(notFoundHandler);
 
-// Middleware para tratar erros
+// Middleware for error handling
 app.use(errorHandler);
 
 export default app;
 ```
 
-#### Inicialização do Servidor (server.ts)
+#### Server Initialization (server.ts)
 ```typescript
 import app from './app';
 import logger from './utils/logger';
@@ -102,114 +102,114 @@ import logger from './utils/logger';
 const PORT = process.env.PORT || 3000;
 
 const server = app.listen(PORT, () => {
-  logger.info(`Servidor rodando na porta ${PORT}`);
+  logger.info(`Server running on port ${PORT}`);
 });
 
 export default server;
 ```
 
-## Dependências
+## Dependencies
 
-### Componentes Internos
-- **Setup do Projeto (Tarefa #1)**: Depende da estrutura básica do projeto e configuração do TypeScript
-- **Sistema de Logging (Tarefa #12)**: Utiliza o sistema de logging para registrar eventos do servidor
+### Internal Components
+- **Project Setup (Task #1)**: Depends on the basic project structure and TypeScript configuration
+- **Logging System (Task #12)**: Uses the logging system to record server events
 
-### Componentes que Dependem Deste
-- **Rotas de Usuário (Tarefa #5)**: Depende da configuração Express para montar as rotas
-- **Middleware de Validação (Tarefa #6)**: Integra-se ao pipeline de processamento de requisições
-- **Middleware de Tratamento de Erros (Tarefa #7)**: Utiliza a infraestrutura de tratamento de erros configurada
-- **Documentação da API (Tarefa #11)**: Utiliza a configuração do Swagger integrada ao Express
+### Components that Depend on This
+- **User Routes (Task #5)**: Depends on Express configuration to mount routes
+- **Validation Middleware (Task #6)**: Integrates with the request processing pipeline
+- **Error Handling Middleware (Task #7)**: Uses the configured error handling infrastructure
+- **API Documentation (Task #11)**: Uses the Swagger configuration integrated with Express
 
-### Sistemas Externos
-- **Express.js**: Framework web para Node.js
-- **Node.js HTTP Server**: Servidor HTTP subjacente
+### External Systems
+- **Express.js**: Web framework for Node.js
+- **Node.js HTTP Server**: Underlying HTTP server
 
-## Requisitos de Configuração
+## Configuration Requirements
 
-### Variáveis de Ambiente
-- `PORT`: Porta em que o servidor será executado (default: 3000)
-- `NODE_ENV`: Ambiente de execução (development, production, test)
+### Environment Variables
+- `PORT`: Port on which the server will run (default: 3000)
+- `NODE_ENV`: Execution environment (development, production, test)
 
-### Configuração de Aplicativo
-A aplicação é configurada através dos arquivos:
-- `app.ts`: Configuração do Express, middleware e rotas
-- `server.ts`: Configuração do servidor HTTP e porta
+### Application Configuration
+The application is configured through the files:
+- `app.ts`: Express configuration, middleware, and routes
+- `server.ts`: HTTP server and port configuration
 
-Para iniciar o servidor:
+To start the server:
 ```bash
-# Em desenvolvimento
+# In development
 npm run dev
 
-# Em produção
+# In production
 npm start
 ```
 
-## Limitações Conhecidas
-1. **Sem Load Balancing**: Não há configuração para balanceamento de carga ou múltiplas instâncias
-2. **Tratamento Básico de Erros**: O tratamento de erros não inclui recuperação sofisticada ou fallbacks
-3. **Sem HTTPS**: Configuração apenas para HTTP, sem suporte nativo a HTTPS
-4. **Sem Rate Limiting**: Não há proteção contra excesso de requisições (rate limiting)
-5. **Configuração Estática**: Configurações definidas no código, com pouca parametrização externa
+## Known Limitations
+1. **No Load Balancing**: No configuration for load balancing or multiple instances
+2. **Basic Error Handling**: Error handling does not include sophisticated recovery or fallbacks
+3. **No HTTPS**: Configuration for HTTP only, without native HTTPS support
+4. **No Rate Limiting**: No protection against excessive requests (rate limiting)
+5. **Static Configuration**: Configurations defined in code, with little external parameterization
 
-## Melhorias Futuras Potenciais
-1. **HTTPS Support**: Adicionar suporte a HTTPS para comunicação segura
-2. **Rate Limiting**: Implementar limitação de requisições para proteção contra abusos
-3. **Clustering**: Configurar suporte a múltiplas instâncias usando o módulo cluster do Node.js
-4. **Health Checks**: Adicionar endpoints de verificação de saúde para monitoramento
-5. **Graceful Shutdown**: Implementar encerramento gracioso do servidor para manutenção zero-downtime
+## Potential Future Improvements
+1. **HTTPS Support**: Add HTTPS support for secure communication
+2. **Rate Limiting**: Implement request limiting for protection against abuse
+3. **Clustering**: Configure support for multiple instances using Node.js cluster module
+4. **Health Checks**: Add health check endpoints for monitoring
+5. **Graceful Shutdown**: Implement graceful server shutdown for zero-downtime maintenance
 
-## Exemplos de Código e Padrões de Uso
+## Code Examples and Usage Patterns
 
-### Adicionando Novo Middleware
+### Adding New Middleware
 ```typescript
 import { Request, Response, NextFunction } from 'express';
 
-// Criar um middleware personalizado
+// Create a custom middleware
 const customMiddleware = (req: Request, res: Response, next: NextFunction) => {
-  // Realizar alguma operação na requisição
-  req.headers['x-custom-header'] = 'valor';
+  // Perform some operation on the request
+  req.headers['x-custom-header'] = 'value';
 
-  // Passar para o próximo middleware
+  // Pass to the next middleware
   next();
 };
 
-// Adicionar ao Express
+// Add to Express
 app.use(customMiddleware);
 ```
 
-### Definindo uma Nova Rota
+### Defining a New Route
 ```typescript
 import express, { Request, Response } from 'express';
 
 const router = express.Router();
 
-// Definir uma rota GET
-router.get('/novo-recurso', (req: Request, res: Response) => {
-  res.json({ mensagem: 'Novo recurso disponível!' });
+// Define a GET route
+router.get('/new-resource', (req: Request, res: Response) => {
+  res.json({ message: 'New resource available!' });
 });
 
-// Montar no app principal
-app.use('/api/recurso', router);
+// Mount on the main app
+app.use('/api/resource', router);
 ```
 
-## Guia de Solução de Problemas
+## Troubleshooting Guide
 
-### Problema 1: Servidor não inicia ou falha ao iniciar
-**Sintomas:**
-- Mensagem de erro ao executar `npm run dev` ou `npm start`
-- Erro indicando que a porta está em uso
+### Problem 1: Server doesn't start or fails to start
+**Symptoms:**
+- Error message when running `npm run dev` or `npm start`
+- Error indicating that the port is in use
 
-**Solução:**
-1. Verifique se não há outro processo usando a porta especificada
-2. Tente alterar a porta através da variável de ambiente PORT: `PORT=4000 npm run dev`
-3. Verifique os logs de erro para identificar a causa específica do problema
+**Solution:**
+1. Check if there's no other process using the specified port
+2. Try changing the port through the PORT environment variable: `PORT=4000 npm run dev`
+3. Check the error logs to identify the specific cause of the problem
 
-### Problema 2: Requisições resultam em erro 404 (Not Found)
-**Sintomas:**
-- API retorna erro 404 mesmo para rotas que deveriam existir
-- Mensagem "Rota não encontrada" nos logs
+### Problem 2: Requests result in 404 error (Not Found)
+**Symptoms:**
+- API returns 404 error even for routes that should exist
+- "Route not found" message in logs
 
-**Solução:**
-1. Verifique se as rotas estão corretamente definidas e montadas em `app.ts`
-2. Confira o caminho base da rota (ex: `/api/users`) e o caminho específico no router
-3. Verifique a ordem dos middlewares - o handler 404 deve estar após as definições de rotas
+**Solution:**
+1. Check if the routes are correctly defined and mounted in `app.ts`
+2. Verify the base path of the route (e.g., `/api/users`) and the specific path in the router
+3. Check the order of middlewares - the 404 handler should be after the route definitions

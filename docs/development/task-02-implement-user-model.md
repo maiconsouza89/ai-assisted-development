@@ -1,18 +1,18 @@
-# Task #2: Implementar Modelo de Usuário
+# Task #2: Implement User Model
 
-## Propósito e Escopo
-O propósito desta tarefa foi criar o modelo de dados de Usuário com as propriedades necessárias (id, nome, email) e métodos para manipulação de dados em memória. Este modelo serve como a representação principal dos dados de usuário e fornece a interface para operações CRUD (Create, Read, Update, Delete) no armazenamento de dados.
+## Purpose and Scope
+The purpose of this task was to create the User data model with the necessary properties (id, name, email) and methods for in-memory data manipulation. This model serves as the main representation of user data and provides the interface for CRUD operations (Create, Read, Update, Delete) in the data storage.
 
-## Arquitetura Técnica e Decisões de Design
-A implementação do modelo de usuário segue uma estrutura de duas camadas: uma interface que define a estrutura dos dados e uma classe de armazenamento que gerencia a persistência e manipulação. Decisões importantes incluem:
+## Technical Architecture and Design Decisions
+The user model implementation follows a two-layer structure: an interface that defines the data structure and a storage class that manages persistence and manipulation. Important decisions include:
 
-1. **Interface para Tipagem**: Criação da interface `IUser` para definir a estrutura de dados e garantir consistência
-2. **Classe de Implementação**: Implementação da classe `User` para instanciar objetos de usuário
-3. **Armazenamento em Memória**: Uso da classe estática `UserStore` para gerenciar os dados em memória
-4. **ID Autoincremental**: Sistema de geração automática de IDs para garantir unicidade
-5. **Métodos Estáticos**: Implementação de métodos estáticos para facilitar o acesso às funções de armazenamento
+1. **Interface for Typing**: Creation of the `IUser` interface to define the data structure and ensure consistency
+2. **Implementation Class**: Implementation of the `User` class to instantiate user objects
+3. **In-Memory Storage**: Use of the static `UserStore` class to manage data in memory
+4. **Auto-incremental ID**: Automatic ID generation system to ensure uniqueness
+5. **Static Methods**: Implementation of static methods to facilitate access to storage functions
 
-### Diagrama de Arquitetura
+### Architecture Diagram
 ```
 +-------------+     +----------------+      +----------------+
 |  Interface  |     |      Class     |      |   Data Store   |
@@ -27,20 +27,20 @@ A implementação do modelo de usuário segue uma estrutura de duas camadas: uma
                                              +-------------+
 ```
 
-## Detalhes de Implementação
+## Implementation Details
 
-### Estrutura de Código
-O modelo de usuário está organizado no arquivo:
-- `src/models/User.ts`: Contém a interface `IUser`, a classe `User` e a classe `UserStore`
+### Code Structure
+The user model is organized in the file:
+- `src/models/User.ts`: Contains the `IUser` interface, the `User` class, and the `UserStore` class
 
-### Padrões Utilizados
-1. **Repository Pattern**: `UserStore` implementa o padrão repositório para abstração do armazenamento
-2. **Interface-based Programming**: Uso de interface para definir a estrutura e garantir implementação
-3. **Static Utility Methods**: Métodos estáticos para operações CRUD no armazenamento
+### Patterns Used
+1. **Repository Pattern**: `UserStore` implements the repository pattern for storage abstraction
+2. **Interface-based Programming**: Use of interface to define structure and ensure implementation
+3. **Static Utility Methods**: Static methods for CRUD operations in storage
 
-### Componentes Principais
+### Main Components
 
-#### Interface IUser
+#### IUser Interface
 ```typescript
 export interface IUser {
   id: number;
@@ -49,7 +49,7 @@ export interface IUser {
 }
 ```
 
-#### Classe User
+#### User Class
 ```typescript
 export class User implements IUser {
   id: number;
@@ -64,7 +64,7 @@ export class User implements IUser {
 }
 ```
 
-#### Classe UserStore
+#### UserStore Class
 ```typescript
 export class UserStore {
   private static users: IUser[] = [];
@@ -101,103 +101,103 @@ export class UserStore {
 }
 ```
 
-## Dependências
+## Dependencies
 
-### Componentes Internos
-- **Setup do Projeto (Tarefa #1)**: Depende da estrutura básica do projeto e configuração do TypeScript
+### Internal Components
+- **Project Setup (Task #1)**: Depends on the basic project structure and TypeScript configuration
 
-### Componentes que Dependem Deste
-- **Controlador de Usuário (Tarefa #4)**: Usa o modelo para realizar operações CRUD
-- **Testes do Modelo (Tarefa #8)**: Testa a funcionalidade do modelo
-- **Testes de Integração (Tarefa #10)**: Usa o modelo como parte dos testes end-to-end
+### Components that Depend on This
+- **User Controller (Task #4)**: Uses the model to perform CRUD operations
+- **Model Tests (Task #8)**: Tests the model functionality
+- **Integration Tests (Task #10)**: Uses the model as part of end-to-end tests
 
-### Sistemas Externos
-- **TypeScript**: Para tipagem e interfaces
+### External Systems
+- **TypeScript**: For typing and interfaces
 
-## Requisitos de Configuração
+## Configuration Requirements
 
-### Variáveis de Ambiente
-Não há variáveis de ambiente específicas para o modelo de usuário.
+### Environment Variables
+There are no specific environment variables for the user model.
 
-### Configuração de Aplicativo
-Não é necessária configuração adicional para o modelo de usuário.
+### Application Configuration
+No additional configuration is needed for the user model.
 
-## Limitações Conhecidas
-1. **Armazenamento Volátil**: Os dados são armazenados em memória e perdidos ao reiniciar o servidor
-2. **Ausência de Validação**: A validação dos dados é tratada em camadas superiores (middleware), não no modelo
-3. **Sem Indexação**: Busca por ID requer iteração linear (O(n)) por todos os usuários
-4. **Sem Persistência**: Não há integração com banco de dados para persistência
-5. **Thread Safety**: Não há mecanismos para garantir segurança em ambiente multi-thread
+## Known Limitations
+1. **Volatile Storage**: Data is stored in memory and lost when the server restarts
+2. **Lack of Validation**: Data validation is handled in upper layers (middleware), not in the model
+3. **No Indexing**: Searching by ID requires linear iteration (O(n)) through all users
+4. **No Persistence**: There is no database integration for persistence
+5. **Thread Safety**: There are no mechanisms to ensure safety in a multi-threaded environment
 
-## Melhorias Futuras Potenciais
-1. **Integração com Banco de Dados**: Substituir o armazenamento em memória por persistência em banco de dados
-2. **Validação no Modelo**: Adicionar métodos de validação no nível do modelo
-3. **Paginação e Filtragem**: Implementar métodos para busca paginada e filtrada
-4. **Índices para Busca**: Adicionar estruturas de dados otimizadas para busca
-5. **Campos Adicionais**: Expandir o modelo com campos extras (ex: data de criação, última atualização)
+## Potential Future Improvements
+1. **Database Integration**: Replace in-memory storage with database persistence
+2. **Model-level Validation**: Add validation methods at the model level
+3. **Pagination and Filtering**: Implement methods for paginated and filtered search
+4. **Search Indices**: Add optimized data structures for searching
+5. **Additional Fields**: Expand the model with extra fields (e.g., creation date, last update)
 
-## Exemplos de Código e Padrões de Uso
+## Code Examples and Usage Patterns
 
-### Criação de Usuário
+### User Creation
 ```typescript
 import { UserStore } from '../models/User';
 
-// Criar um novo usuário
+// Create a new user
 const newUser = UserStore.create({
-  name: 'João Silva',
-  email: 'joao@exemplo.com'
+  name: 'John Smith',
+  email: 'john@example.com'
 });
 
-console.log(`Usuário criado com ID: ${newUser.id}`);
+console.log(`User created with ID: ${newUser.id}`);
 ```
 
-### Busca e Atualização
+### Search and Update
 ```typescript
 import { UserStore } from '../models/User';
 
-// Buscar um usuário por ID
+// Search for a user by ID
 const user = UserStore.getById(1);
 
 if (user) {
-  // Atualizar email
-  const updatedUser = UserStore.update(user.id, { email: 'novo@exemplo.com' });
-  console.log('Usuário atualizado:', updatedUser);
+  // Update email
+  const updatedUser = UserStore.update(user.id, { email: 'new@example.com' });
+  console.log('User updated:', updatedUser);
 } else {
-  console.log('Usuário não encontrado');
+  console.log('User not found');
 }
 ```
 
-### Listagem e Remoção
+### Listing and Removal
 ```typescript
 import { UserStore } from '../models/User';
 
-// Listar todos os usuários
+// List all users
 const allUsers = UserStore.getAll();
-console.log(`Total de usuários: ${allUsers.length}`);
+console.log(`Total users: ${allUsers.length}`);
 
-// Remover um usuário
+// Remove a user
 const deleted = UserStore.delete(1);
-console.log(`Usuário removido: ${deleted ? 'Sim' : 'Não'}`);
+console.log(`User removed: ${deleted ? 'Yes' : 'No'}`);
 ```
 
-## Guia de Solução de Problemas
+## Troubleshooting Guide
 
-### Problema 1: Usuário não está sendo encontrado por ID
-**Sintomas:**
-- Método `getById` retorna `undefined` mesmo quando o usuário existe
-- Aplicação apresenta erro 404 ao tentar acessar um usuário
+### Problem 1: User not found by ID
+**Symptoms:**
+- `getById` method returns `undefined` even when the user exists
+- Application shows 404 error when trying to access a user
 
-**Solução:**
-1. Verifique se o ID passado é do tipo correto (number) e não uma string
-2. Confira se o usuário foi realmente criado e adicionado ao armazenamento
-3. Verifique se não há conversão implícita de tipos durante a comparação
+**Solution:**
+1. Check if the ID passed is of the correct type (number) and not a string
+2. Verify if the user was actually created and added to storage
+3. Check if there's no implicit type conversion during comparison
 
-### Problema 2: Atualização de usuário não reflete todas as mudanças
-**Sintomas:**
-- Alguns campos não são atualizados após chamar o método `update`
-- Dados parcialmente atualizados
+### Problem 2: User update doesn't reflect all changes
+**Symptoms:**
+- Some fields are not updated after calling the `update` method
+- Partially updated data
 
-**Solução:**
-1. Certifique-se de passar todos os campos que deseja atualizar no objeto `userData`
-2. Verifique se o objeto de atualização tem a estrutura correta
-3. Confira se o operador spread (`...`) está funcionando como esperado para mesclar os objetos
+**Solution:**
+1. Make sure to pass all fields you want to update in the `userData` object
+2. Verify if the update object has the correct structure
+3. Check if the spread operator (`...`) is working as expected to merge the objects

@@ -1,61 +1,61 @@
-# Documentação de Desenvolvimento
+# Development Documentation
 
-Este documento serve como índice central para toda a documentação técnica relacionada às tarefas de desenvolvimento do projeto. Aqui você encontrará links para a documentação detalhada de cada tarefa, além de uma visão geral da arquitetura do sistema.
+This document serves as the central index for all technical documentation related to the project's development tasks. Here you will find links to detailed documentation for each task, as well as an overview of the system architecture.
 
-## Visão Geral da Arquitetura
+## Architecture Overview
 
-O projeto é uma API CRUD de usuários implementada com TypeScript e Express. A arquitetura segue um modelo em camadas com separação clara de responsabilidades:
+The project is a user CRUD API implemented with TypeScript and Express. The architecture follows a layered model with clear separation of responsibilities:
 
-1. **Camada de Rotas**: Gerencia os endpoints HTTP e direciona as requisições para os controladores apropriados
-2. **Camada de Controladores**: Contém a lógica de negócios e interage com os modelos
-3. **Camada de Modelos**: Representa os dados e inclui lógica para manipulação dos dados
-4. **Middleware**: Fornece funcionalidades transversais como validação, tratamento de erros e logging
+1. **Routes Layer**: Manages HTTP endpoints and directs requests to the appropriate controllers
+2. **Controllers Layer**: Contains business logic and interacts with models
+3. **Models Layer**: Represents data and includes logic for data manipulation
+4. **Middleware**: Provides cross-cutting functionalities such as validation, error handling, and logging
 
-### Componentes Principais
+### Main Components
 
-- **Express.js**: Framework web para Node.js
-- **TypeScript**: Adiciona tipagem estática ao JavaScript
-- **Jest**: Framework de testes
-- **Swagger/OpenAPI**: Documentação da API
-- **Winston**: Biblioteca de logging
+- **Express.js**: Web framework for Node.js
+- **TypeScript**: Adds static typing to JavaScript
+- **Jest**: Testing framework
+- **Swagger/OpenAPI**: API documentation
+- **Winston**: Logging library
 
-## Índice de Documentação de Tarefas
+## Task Documentation Index
 
-### Configuração e Estrutura Base
+### Setup and Base Structure
 - [Task #1: Setup Project Structure and Dependencies](task-01-setup-project-structure.md)
 - [Task #3: Setup Express Server Configuration](task-03-setup-express-server.md)
 
-### Implementação do Modelo de Usuário
+### User Model Implementation
 - [Task #2: Implement User Model](task-02-implement-user-model.md)
 
-### API e Controladores
+### API and Controllers
 - [Task #4: Implement User Controller](task-04-implement-user-controller.md)
 - [Task #5: Implement User Routes](task-05-implement-user-routes.md)
 
-### Middleware e Funções de Suporte
+### Middleware and Support Functions
 - [Task #6: Implement Input Validation Middleware](task-06-implement-validation-middleware.md)
 - [Task #7: Implement Error Handling Middleware](task-07-implement-error-handling.md)
 - [Task #12: Implement Logging and Request Tracking](task-12-implement-logging.md)
 
-### Testes
+### Tests
 - [Task #8: Implement Unit Tests for User Model](task-08-unit-tests-user-model.md)
 - [Task #9: Implement Unit Tests for User Controller](task-09-unit-tests-user-controller.md)
 - [Task #10: Implement Integration Tests](task-10-implement-integration-tests.md)
 
-### Documentação
+### Documentation
 - [Task #11: Implement API Documentation](task-11-implement-api-documentation.md)
 
-## Como Usar Esta Documentação
+## How to Use This Documentation
 
-Cada arquivo de documentação de tarefa segue uma estrutura consistente que inclui:
+Each task documentation file follows a consistent structure that includes:
 
-1. **Propósito e Escopo**: Visão geral do que a tarefa realiza
-2. **Arquitetura e Design**: Decisões técnicas e padrões implementados
-3. **Detalhes de Implementação**: Detalhes específicos de código e estrutura
-4. **Dependências**: Relações com outros componentes do sistema
-5. **Configuração**: Requisitos de configuração e ambiente
-6. **Limitações e Melhorias**: Restrições conhecidas e oportunidades futuras
-7. **Exemplos de Código**: Exemplos práticos de uso
-8. **Troubleshooting**: Guia para resolução de problemas comuns
+1. **Purpose and Scope**: Overview of what the task accomplishes
+2. **Architecture and Design**: Technical decisions and implemented patterns
+3. **Implementation Details**: Specific code details and structure
+4. **Dependencies**: Relationships with other system components
+5. **Configuration**: Environment and configuration requirements
+6. **Limitations and Improvements**: Known constraints and future opportunities
+7. **Code Examples**: Practical usage examples
+8. **Troubleshooting**: Guide for resolving common issues
 
-Esta documentação é voltada para desenvolvedores que precisam entender, manter ou estender o código-base.
+This documentation is aimed at developers who need to understand, maintain, or extend the codebase.

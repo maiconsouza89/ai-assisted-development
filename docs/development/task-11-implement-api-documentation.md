@@ -1,68 +1,68 @@
-# Task #11: Implementar Documentação da API
+# Task #11: Implement API Documentation
 
-## Propósito e Escopo
-O propósito desta tarefa foi implementar documentação abrangente para a API, permitindo que desenvolvedores entendam e utilizem os endpoints disponíveis com facilidade. A documentação precisa cobrir todos os endpoints, parâmetros, corpos de requisição, respostas e códigos de status HTTP, proporcionando um guia completo e atualizado para interagir com a API.
+## Purpose and Scope
+The purpose of this task was to implement comprehensive documentation for the API, allowing developers to easily understand and use the available endpoints. The documentation needs to cover all endpoints, parameters, request bodies, responses, and HTTP status codes, providing a complete and up-to-date guide for interacting with the API.
 
-## Arquitetura Técnica e Decisões de Design
-A implementação da documentação da API utilizou o padrão OpenAPI (anteriormente conhecido como Swagger) através da biblioteca Swagger JSDoc. Esta abordagem foi escolhida para:
+## Technical Architecture and Design Decisions
+The API documentation implementation used the OpenAPI standard (formerly known as Swagger) through the Swagger JSDoc library. This approach was chosen for:
 
-1. **Documentação Integrada ao Código**: Permite que a documentação seja mantida junto ao código, facilitando atualizações
-2. **Padrão Amplamente Adotado**: O OpenAPI é um padrão da indústria para documentação de APIs RESTful
-3. **Interface Interativa**: Fornece uma interface web interativa para testar endpoints diretamente da documentação
-4. **Geração Automática**: Utiliza comentários JSDoc para gerar automaticamente a especificação OpenAPI
+1. **Code-Integrated Documentation**: Allows documentation to be maintained alongside the code, facilitating updates
+2. **Widely Adopted Standard**: OpenAPI is an industry standard for RESTful API documentation
+3. **Interactive Interface**: Provides an interactive web interface to test endpoints directly from the documentation
+4. **Automatic Generation**: Uses JSDoc comments to automatically generate the OpenAPI specification
 
-## Detalhes de Implementação
+## Implementation Details
 
-### Estrutura de Código
-A implementação da documentação está organizada nos seguintes arquivos:
-- `src/swagger.ts`: Configuração central do Swagger JSDoc
-- Comentários JSDoc em arquivos de rotas e modelos para documentar endpoints e schemas
+### Code Structure
+The documentation implementation is organized in the following files:
+- `src/swagger.ts`: Central configuration for Swagger JSDoc
+- JSDoc comments in route and model files to document endpoints and schemas
 
-### Padrões Utilizados
-1. **Comentários OpenAPI/Swagger**: Utilização de comentários especiais para documentar endpoints, seguindo a especificação OpenAPI 3.0
-2. **Schemas Reutilizáveis**: Definição de schemas para componentes comuns, como o modelo de Usuário
-3. **Agrupamento por Tags**: Organização de endpoints por tags funcionais (ex: "Usuários")
+### Patterns Used
+1. **OpenAPI/Swagger Comments**: Use of special comments to document endpoints, following the OpenAPI 3.0 specification
+2. **Reusable Schemas**: Definition of schemas for common components, such as the User model
+3. **Grouping by Tags**: Organization of endpoints by functional tags (e.g., "Users")
 
-### Algoritmos e Lógica Principal
-A configuração do Swagger JSDoc inclui:
-1. Definição da versão da OpenAPI (3.0.0)
-2. Informações gerais sobre a API (título, versão, descrição)
-3. Configuração de servidores (desenvolvimento em localhost:3000)
-4. Localização dos arquivos a serem escaneados em busca de comentários de documentação
+### Main Algorithms and Logic
+The Swagger JSDoc configuration includes:
+1. Definition of the OpenAPI version (3.0.0)
+2. General information about the API (title, version, description)
+3. Server configuration (development on localhost:3000)
+4. Location of files to be scanned for documentation comments
 
-## Dependências
+## Dependencies
 
-### Componentes Internos
-- **Rotas da API**: Utilizados para extrair comentários de documentação
-- **Modelos**: Utilizados para definir schemas de dados
+### Internal Components
+- **API Routes**: Used to extract documentation comments
+- **Models**: Used to define data schemas
 
-### Sistemas Externos
-- **swagger-jsdoc**: Biblioteca para gerar a especificação OpenAPI a partir de comentários JSDoc
-- **swagger-ui-express**: Middleware para servir a interface Swagger UI
+### External Systems
+- **swagger-jsdoc**: Library to generate the OpenAPI specification from JSDoc comments
+- **swagger-ui-express**: Middleware to serve the Swagger UI interface
 
-## Requisitos de Configuração
+## Configuration Requirements
 
-### Variáveis de Ambiente
-Não são necessárias variáveis de ambiente específicas para a documentação da API.
+### Environment Variables
+No specific environment variables are needed for API documentation.
 
-### Configuração de Aplicativo
-A configuração da documentação da API está no arquivo `src/swagger.ts`. Para visualizar a documentação, acesse a rota `/api-docs` no servidor em execução.
+### Application Configuration
+The API documentation configuration is in the `src/swagger.ts` file. To view the documentation, access the `/api-docs` route on the running server.
 
-## Limitações Conhecidas
-1. A documentação precisa ser atualizada manualmente quando há mudanças nos endpoints ou modelos
-2. Não há validação automática para garantir que a implementação corresponda à documentação
-3. A interface Swagger UI não está disponível em produção por padrão (apenas em desenvolvimento)
+## Known Limitations
+1. Documentation needs to be manually updated when there are changes to endpoints or models
+2. There is no automatic validation to ensure that the implementation matches the documentation
+3. The Swagger UI interface is not available in production by default (only in development)
 
-## Melhorias Futuras Potenciais
-1. Implementar testes automatizados para validar se a API corresponde à documentação
-2. Adicionar exemplos de requisição e resposta mais detalhados
-3. Integrar autenticação à documentação para endpoints protegidos (futuros)
-4. Implementar versionamento da API e refletir isso na documentação
-5. Adicionar documentação em múltiplos idiomas
+## Potential Future Improvements
+1. Implement automated tests to validate if the API matches the documentation
+2. Add more detailed request and response examples
+3. Integrate authentication into the documentation for protected endpoints (future)
+4. Implement API versioning and reflect this in the documentation
+5. Add documentation in multiple languages
 
-## Exemplos de Código e Padrões de Uso
+## Code Examples and Usage Patterns
 
-### Configuração do Swagger
+### Swagger Configuration
 ```typescript
 import swaggerJSDoc from 'swagger-jsdoc';
 
@@ -70,14 +70,14 @@ const options: swaggerJSDoc.Options = {
   definition: {
     openapi: '3.0.0',
     info: {
-      title: 'API de Gerenciamento de Usuários',
+      title: 'User Management API',
       version: '1.0.0',
-      description: 'Uma API Express simples para gerenciar usuários',
+      description: 'A simple Express API for managing users',
     },
     servers: [
       {
         url: 'http://localhost:3000',
-        description: 'Servidor de desenvolvimento',
+        description: 'Development server',
       },
     ],
   },
@@ -87,17 +87,17 @@ const options: swaggerJSDoc.Options = {
 export const swaggerSpec = swaggerJSDoc(options);
 ```
 
-### Exemplo de Documentação de Rota
+### Route Documentation Example
 ```typescript
 /**
  * @swagger
  * /api/users:
  *   get:
- *     summary: Retorna todos os usuários
- *     tags: [Usuários]
+ *     summary: Returns all users
+ *     tags: [Users]
  *     responses:
  *       200:
- *         description: Lista de todos os usuários
+ *         description: List of all users
  *         content:
  *           application/json:
  *             schema:
@@ -108,7 +108,7 @@ export const swaggerSpec = swaggerJSDoc(options);
 router.get('/', userController.getAllUsers);
 ```
 
-### Exemplo de Schema de Documentação
+### Documentation Schema Example
 ```typescript
 /**
  * @swagger
@@ -122,39 +122,39 @@ router.get('/', userController.getAllUsers);
  *       properties:
  *         id:
  *           type: integer
- *           description: ID único do usuário
+ *           description: Unique user ID
  *         name:
  *           type: string
- *           description: Nome do usuário
+ *           description: User's name
  *         email:
  *           type: string
  *           format: email
- *           description: Email do usuário
+ *           description: User's email
  *       example:
  *         id: 1
- *         name: João Silva
- *         email: joao@exemplo.com
+ *         name: John Smith
+ *         email: john@example.com
  */
 ```
 
-## Guia de Solução de Problemas
+## Troubleshooting Guide
 
-### Problema 1: Documentação não aparece na interface Swagger UI
-**Sintomas:**
-- Rota `/api-docs` mostra a interface, mas sem endpoints ou com informações incompletas
-- Erros no console relacionados a parse de arquivos swagger
+### Problem 1: Documentation doesn't appear in Swagger UI interface
+**Symptoms:**
+- The `/api-docs` route shows the interface, but with no endpoints or incomplete information
+- Errors in the console related to swagger file parsing
 
-**Solução:**
-1. Verifique se os caminhos em `apis` na configuração do Swagger apontam para os arquivos corretos
-2. Confira se os comentários JSDoc seguem a sintaxe correta do Swagger
-3. Verifique se a aplicação Express está carregando o middleware swagger-ui-express corretamente
+**Solution:**
+1. Check if the paths in `apis` in the Swagger configuration point to the correct files
+2. Verify that JSDoc comments follow the correct Swagger syntax
+3. Check if the Express application is correctly loading the swagger-ui-express middleware
 
-### Problema 2: Esquemas de componentes não estão sendo referenciados corretamente
-**Sintomas:**
-- Erros "Cannot resolve reference" na interface Swagger UI
-- Modelos referenciados aparecem como "undefined" ou objetos vazios
+### Problem 2: Component schemas are not being correctly referenced
+**Symptoms:**
+- "Cannot resolve reference" errors in the Swagger UI interface
+- Referenced models appear as "undefined" or empty objects
 
-**Solução:**
-1. Verifique se os componentes estão definidos corretamente no JSDoc
-2. Certifique-se de que as referências aos componentes usam o caminho correto (ex: `#/components/schemas/User`)
-3. Verifique a ordem de carregamento para garantir que definições de componentes sejam processadas antes de referências
+**Solution:**
+1. Check if the components are correctly defined in JSDoc
+2. Make sure that references to components use the correct path (e.g., `#/components/schemas/User`)
+3. Check the loading order to ensure that component definitions are processed before references
