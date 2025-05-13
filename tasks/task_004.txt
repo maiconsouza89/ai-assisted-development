@@ -1,0 +1,125 @@
+# Task ID: 4
+# Title: Implement User Controller
+# Status: done
+# Dependencies: 2
+# Priority: high
+# Description: Create the UserController with methods for handling CRUD operations.
+# Details:
+Create `src/controllers/UserController.ts`:
+
+```typescript
+import { Request, Response } from 'express';
+import { UserStore, IUser } from '../models/User';
+
+export class UserController {
+  // Get all users
+  static getAllUsers(req: Request, res: Response): void {
+    const users = UserStore.getAll();
+    res.json(users);
+  }
+
+  // Get user by ID
+  static getUserById(req: Request, res: Response): void {
+    const id = parseInt(req.params.id);
+    
+    if (isNaN(id)) {
+      res.status(400).json({ error: 'Invalid ID format' });
+      return;
+    }
+    
+    const user = UserStore.getById(id);
+    
+    if (!user) {
+      res.status(404).json({ error: 'User not found' });
+      return;
+    }
+    
+    res.json(user);
+  }
+
+  // Create new user
+  static createUser(req: Request, res: Response): void {
+    const { name, email } = req.body;
+    
+    // Validate input
+    if (!name || !email) {
+      res.status(400).json({ error: 'Name and email are required' });
+      return;
+    }
+    
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      res.status(400).json({ error: 'Invalid email format' });
+      return;
+    }
+    
+    const newUser = UserStore.create({ name, email });
+    res.status(201).json(newUser);
+  }
+
+  // Update user
+  static updateUser(req: Request, res: Response): void {
+    const id = parseInt(req.params.id);
+    const { name, email } = req.body;
+    
+    if (isNaN(id)) {
+      res.status(400).json({ error: 'Invalid ID format' });
+      return;
+    }
+    
+    // Validate that at least one field is provided
+    if (!name && !email) {
+      res.status(400).json({ error: 'At least one field (name or email) is required for update' });
+      return;
+    }
+    
+    // Validate email format if provided
+    if (email) {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        res.status(400).json({ error: 'Invalid email format' });
+        return;
+      }
+    }
+    
+    const updatedUser = UserStore.update(id, { name, email });
+    
+    if (!updatedUser) {
+      res.status(404).json({ error: 'User not found' });
+      return;
+    }
+    
+    res.json(updatedUser);
+  }
+
+  // Delete user
+  static deleteUser(req: Request, res: Response): void {
+    const id = parseInt(req.params.id);
+    
+    if (isNaN(id)) {
+      res.status(400).json({ error: 'Invalid ID format' });
+      return;
+    }
+    
+    const deleted = UserStore.delete(id);
+    
+    if (!deleted) {
+      res.status(404).json({ error: 'User not found' });
+      return;
+    }
+    
+    res.status(204).send();
+  }
+}
+```
+
+# Test Strategy:
+Create unit tests in `src/__tests__/controllers/UserController.test.ts` to verify:
+1. getAllUsers returns all users
+2. getUserById returns the correct user or 404 for non-existent users
+3. createUser adds a new user with validation
+4. updateUser modifies user data with validation
+5. deleteUser removes a user correctly
+
+Mock the Request and Response objects using Jest mocks to simulate Express behavior.

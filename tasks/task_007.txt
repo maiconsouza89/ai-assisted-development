@@ -1,0 +1,121 @@
+# Task ID: 7
+# Title: Implement Error Handling Middleware
+# Status: done
+# Dependencies: 3
+# Priority: medium
+# Description: Create comprehensive error handling middleware to provide clear error messages and appropriate HTTP status codes.
+# Details:
+Create `src/middleware/errorHandler.ts`:
+
+```typescript
+import { Request, Response, NextFunction } from 'express';
+
+// Custom error class for API errors
+export class ApiError extends Error {
+  statusCode: number;
+  
+  constructor(statusCode: number, message: string) {
+    super(message);
+    this.statusCode = statusCode;
+    this.name = 'ApiError';
+  }
+}
+
+// Error handler middleware
+export const errorHandler = (err: Error, req: Request, res: Response, next: NextFunction): void => {
+  console.error(`Error: ${err.message}`);
+  console.error(err.stack);
+  
+  if (err instanceof ApiError) {
+    res.status(err.statusCode).json({
+      error: err.name,
+      message: err.message
+    });
+    return;
+  }
+  
+  // Default to 500 internal server error for unhandled errors
+  res.status(500).json({
+    error: 'InternalServerError',
+    message: 'An unexpected error occurred'
+  });
+};
+
+// 404 handler for routes that don't exist
+export const notFoundHandler = (req: Request, res: Response): void => {
+  res.status(404).json({
+    error: 'NotFound',
+    message: 'The requested resource does not exist'
+  });
+};
+```
+
+Update `src/app.ts` to use the error handling middleware:
+
+```typescript
+import express, { Application } from 'express';
+import userRoutes from './routes/userRoutes';
+import { errorHandler, notFoundHandler } from './middleware/errorHandler';
+
+const app: Application = express();
+
+// Middleware
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+// Routes
+app.get('/', (req, res) => {
+  res.json({ message: 'User CRUD API is running' });
+});
+
+app.use('/api/users', userRoutes);
+
+// Error handling
+app.use(notFoundHandler);
+app.use(errorHandler);
+
+export default app;
+```
+
+Update the UserController to use the ApiError class:
+
+```typescript
+import { Request, Response, NextFunction } from 'express';
+import { UserStore, IUser } from '../models/User';
+import { ApiError } from '../middleware/errorHandler';
+
+export class UserController {
+  // Get all users
+  static getAllUsers(req: Request, res: Response): void {
+    const users = UserStore.getAll();
+    res.json(users);
+  }
+
+  // Get user by ID
+  static getUserById(req: Request, res: Response, next: NextFunction): void {
+    try {
+      const id = parseInt(req.params.id);
+      const user = UserStore.getById(id);
+      
+      if (!user) {
+        throw new ApiError(404, 'User not found');
+      }
+      
+      res.json(user);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  // Other methods similarly updated to use try/catch and ApiError
+}
+```
+
+# Test Strategy:
+Create unit tests in `src/__tests__/middleware/errorHandler.test.ts` to verify:
+1. ApiError correctly sets status code and message
+2. errorHandler middleware returns the correct status code and error format for ApiError instances
+3. errorHandler middleware returns 500 status for generic errors
+4. notFoundHandler middleware returns 404 status with the correct error format
+
+Use mock Request, Response, and NextFunction objects to simulate Express behavior.

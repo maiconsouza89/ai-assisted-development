@@ -1,0 +1,107 @@
+# Task ID: 8
+# Title: Implement Unit Tests for User Model
+# Status: done
+# Dependencies: 2
+# Priority: medium
+# Description: Create comprehensive unit tests for the User model to ensure data integrity and correct behavior.
+# Details:
+Create `src/__tests__/models/User.test.ts`:
+
+```typescript
+import { User, UserStore, IUser } from '../../models/User';
+
+describe('User Model', () => {
+  // Clear users before each test
+  beforeEach(() => {
+    // Access the private users array for testing purposes
+    (UserStore as any).users = [];
+    (UserStore as any).lastId = 0;
+  });
+
+  describe('User class', () => {
+    it('should create a user with the provided properties', () => {
+      const user = new User('John Doe', 'john@example.com');
+      
+      expect(user.name).toBe('John Doe');
+      expect(user.email).toBe('john@example.com');
+      expect(user.id).toBeDefined();
+    });
+
+    it('should use the provided ID if given', () => {
+      const user = new User('John Doe', 'john@example.com', 123);
+      
+      expect(user.id).toBe(123);
+    });
+  });
+
+  describe('UserStore', () => {
+    it('should create a user and add it to the store', () => {
+      const user = UserStore.create({ name: 'John Doe', email: 'john@example.com' });
+      
+      expect(user.id).toBe(1);
+      expect(user.name).toBe('John Doe');
+      expect(user.email).toBe('john@example.com');
+      
+      const users = UserStore.getAll();
+      expect(users.length).toBe(1);
+      expect(users[0]).toEqual(user);
+    });
+
+    it('should get a user by ID', () => {
+      const user1 = UserStore.create({ name: 'John Doe', email: 'john@example.com' });
+      const user2 = UserStore.create({ name: 'Jane Doe', email: 'jane@example.com' });
+      
+      const foundUser = UserStore.getById(user1.id);
+      
+      expect(foundUser).toEqual(user1);
+    });
+
+    it('should return undefined for non-existent user ID', () => {
+      const foundUser = UserStore.getById(999);
+      
+      expect(foundUser).toBeUndefined();
+    });
+
+    it('should update a user', () => {
+      const user = UserStore.create({ name: 'John Doe', email: 'john@example.com' });
+      
+      const updatedUser = UserStore.update(user.id, { name: 'John Updated' });
+      
+      expect(updatedUser).toBeDefined();
+      expect(updatedUser?.name).toBe('John Updated');
+      expect(updatedUser?.email).toBe('john@example.com');
+      
+      // Verify the store was updated
+      const foundUser = UserStore.getById(user.id);
+      expect(foundUser?.name).toBe('John Updated');
+    });
+
+    it('should return undefined when updating non-existent user', () => {
+      const updatedUser = UserStore.update(999, { name: 'John Updated' });
+      
+      expect(updatedUser).toBeUndefined();
+    });
+
+    it('should delete a user', () => {
+      const user = UserStore.create({ name: 'John Doe', email: 'john@example.com' });
+      
+      const result = UserStore.delete(user.id);
+      
+      expect(result).toBe(true);
+      
+      // Verify the user was removed
+      const users = UserStore.getAll();
+      expect(users.length).toBe(0);
+    });
+
+    it('should return false when deleting non-existent user', () => \{
+      const result = UserStore.delete(999);
+      
+      expect(result).toBe(false);
+    });
+  });
+});
+```
+
+# Test Strategy:
+Run the tests using Jest with the command `npm test` or `npx jest src/__tests__/models/User.test.ts`. Verify that all tests pass, indicating that the User model functions correctly. Check test coverage to ensure all methods and edge cases are tested.

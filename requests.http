@@ -1,0 +1,32 @@
+### Testar se a API está funcionando
+GET http://localhost:3000/
+Accept: application/json
+
+### Listar todos os usuários
+GET http://localhost:3000/api/users
+Accept: application/json
+
+### Obter usuário por ID (substitua 1 pelo ID desejado)
+GET http://localhost:3000/api/users/1
+Accept: application/json
+
+### Criar novo usuário
+POST http://localhost:3000/api/users
+Content-Type: application/json
+
+{
+  "name": "John Doe",
+  "email": "johndoe@exemplo.com"
+}
+
+### Atualizar usuário (substitua 1 pelo ID desejado)
+PUT http://localhost:3000/api/users/1
+Content-Type: application/json
+
+{
+  "name": "John Doe updated",
+  "email": "johndoeupdated@exemplo.com"
+}
+
+### Excluir usuário (substitua 1 pelo ID desejado)
+DELETE http://localhost:3000/api/users/1

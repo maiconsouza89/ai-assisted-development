@@ -1,0 +1,81 @@
+# Task ID: 5
+# Title: Implement User Routes
+# Status: done
+# Dependencies: 3, 4
+# Priority: high
+# Description: Create the routes for the User API endpoints as specified in the PRD.
+# Details:
+Create `src/routes/userRoutes.ts`:
+
+```typescript
+import { Router } from 'express';
+import { UserController } from '../controllers/UserController';
+
+const router = Router();
+
+// GET /api/users - List all users
+router.get('/', UserController.getAllUsers);
+
+// GET /api/users/:id - Get user by ID
+router.get('/:id', UserController.getUserById);
+
+// POST /api/users - Create new user
+router.post('/', UserController.createUser);
+
+// PUT /api/users/:id - Update user
+router.put('/:id', UserController.updateUser);
+
+// DELETE /api/users/:id - Delete user
+router.delete('/:id', UserController.deleteUser);
+
+export default router;
+```
+
+Update `src/app.ts` to include the routes:
+
+```typescript
+import express, { Application, Request, Response, NextFunction } from 'express';
+import userRoutes from './routes/userRoutes';
+
+const app: Application = express();
+
+// Middleware
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+// Routes
+app.get('/', (req: Request, res: Response) => {
+  res.json({ message: 'User CRUD API is running' });
+});
+
+app.use('/api/users', userRoutes);
+
+// Error handling middleware
+app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
+  console.error(err.stack);
+  res.status(500).json({
+    error: 'Internal Server Error',
+    message: err.message
+  });
+});
+
+// 404 handler
+app.use((req: Request, res: Response) => {
+  res.status(404).json({
+    error: 'Not Found',
+    message: 'The requested resource does not exist'
+  });
+});
+
+export default app;
+```
+
+# Test Strategy:
+Test the routes by making HTTP requests to each endpoint and verifying the responses:
+1. GET /api/users should return an array (empty initially)
+2. POST /api/users with valid data should create a user
+3. GET /api/users/:id with a valid ID should return a user
+4. PUT /api/users/:id with valid data should update a user
+5. DELETE /api/users/:id should remove a user
+
+Use tools like Postman or curl for manual testing, or implement integration tests using supertest.

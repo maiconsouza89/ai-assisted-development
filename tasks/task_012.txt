@@ -1,0 +1,179 @@
+# Task ID: 12
+# Title: Implement Logging and Request Tracking
+# Status: done
+# Dependencies: 3
+# Priority: low
+# Description: Add logging functionality to track API requests, responses, and errors for debugging and monitoring purposes.
+# Details:
+1. Install Morgan for HTTP request logging and Winston for application logging:
+```bash
+npm install morgan winston
+npm install --save-dev @types/morgan
+```
+
+2. Create `src/utils/logger.ts`:
+
+```typescript
+import winston from 'winston';
+
+// Define log format
+const logFormat = winston.format.combine(
+  winston.format.timestamp(),
+  winston.format.printf(({ level, message, timestamp }) => {
+    return `${timestamp} ${level}: ${message}`;
+  })
+);
+
+// Create logger instance
+const logger = winston.createLogger({
+  level: process.env.NODE_ENV === 'production' ? 'info' : 'debug',
+  format: logFormat,
+  transports: [
+    // Console transport for all environments
+    new winston.transports.Console(),
+    // File transport for errors
+    new winston.transports.File({ filename: 'logs/error.log', level: 'error' }),
+    // File transport for all logs
+    new winston.transports.File({ filename: 'logs/combined.log' })
+  ],
+});
+
+export default logger;
+```
+
+3. Create `src/middleware/requestLogger.ts`:
+
+```typescript
+import morgan from 'morgan';
+import { Request, Response } from 'express';
+import logger from '../utils/logger';
+
+// Create a custom token for request ID
+morgan.token('request-id', (req: Request) => {
+  // Generate a unique request ID if not already present
+  if (!req.headers['x-request-id']) {
+    req.headers['x-request-id'] = `${Date.now()}-${Math.random().toString(36).substring(2, 15)}`;
+  }
+  return req.headers['x-request-id'] as string;
+});
+
+// Create a custom format that includes the request ID
+const logFormat = ':request-id :method :url :status :res[content-length] - :response-time ms';
+
+// Create a stream object that writes to our Winston logger
+const stream = {
+  write: (message: string) => {
+    logger.info(message.trim());
+  },
+};
+
+// Export the middleware
+export const requestLogger = morgan(logFormat, { stream });
+
+// Middleware to add request ID to response headers
+export const addRequestId = (req: Request, res: Response, next: Function) => {
+  // Generate a unique request ID if not already present
+  if (!req.headers['x-request-id']) {
+    req.headers['x-request-id'] = `${Date.now()}-${Math.random().toString(36).substring(2, 15)}`;
+  }
+  
+  // Add the request ID to the response headers
+  res.setHeader('X-Request-ID', req.headers['x-request-id'] as string);
+  next();
+};
+```
+
+4. Update `src/app.ts` to use the logging middleware:
+
+```typescript
+import express, { Application } from 'express';
+import swaggerUi from 'swagger-ui-express';
+import { swaggerSpec } from './swagger';
+import userRoutes from './routes/userRoutes';
+import { errorHandler, notFoundHandler } from './middleware/errorHandler';
+import { requestLogger, addRequestId } from './middleware/requestLogger';
+import logger from './utils/logger';
+
+const app: Application = express();
+
+// Request ID and logging middleware
+app.use(addRequestId);
+app.use(requestLogger);
+
+// Standard middleware
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+// Swagger documentation
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
+// Routes
+app.get('/', (req, res) => {
+  logger.debug('Root endpoint accessed');
+  res.json({ message: 'User CRUD API is running' });
+});
+
+app.use('/api/users', userRoutes);
+
+// Error handling
+app.use(notFoundHandler);
+app.use(errorHandler);
+
+// Log when the application starts
+app.on('listening', () => {
+  logger.info(`Server started on port ${process.env.PORT || 3000}`);
+});
+
+export default app;
+```
+
+5. Update the error handler to use the logger:
+
+```typescript
+import { Request, Response, NextFunction } from 'express';
+import logger from '../utils/logger';
+
+// Custom error class for API errors
+export class ApiError extends Error {
+  statusCode: number;
+  
+  constructor(statusCode: number, message: string) {
+    super(message);
+    this.statusCode = statusCode;
+    this.name = 'ApiError';
+  }
+}
+
+// Error handler middleware
+export const errorHandler = (err: Error, req: Request, res: Response, next: NextFunction): void => {
+  const requestId = req.headers['x-request-id'] || 'unknown';
+  
+  if (err instanceof ApiError) {
+    logger.warn(`[${requestId}] ${err.name}: ${err.message}`);
+    res.status(err.statusCode).json({
+      error: err.name,
+      message: err.message,
+      requestId
+    });
+    return;
+  }
+  
+  // Log stack trace for unexpected errors
+  logger.error(`[${requestId}] Unhandled error: ${err.message}\n${err.stack}`);
+  
+  // Default to 500 internal server error for unhandled errors
+  res.status(500).json({
+    error: 'InternalServerError',
+    message: 'An unexpected error occurred',
+    requestId
+  });
+};
+```
+
+# Test Strategy:
+1. Start the server with `npm run dev`
+2. Make various API requests using tools like Postman or curl
+3. Verify that log entries are created in the console and log files
+4. Check that each request has a unique request ID in the logs and response headers
+5. Trigger errors (e.g., invalid requests) and verify they are properly logged
+6. Verify that different log levels (info, warn, error) are used appropriately

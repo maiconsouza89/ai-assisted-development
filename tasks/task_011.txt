@@ -1,0 +1,193 @@
+# Task ID: 11
+# Title: Implement API Documentation
+# Status: done
+# Dependencies: 5
+# Priority: low
+# Description: Create API documentation to help developers understand and use the API endpoints.
+# Details:
+1. Install Swagger UI Express and Swagger JSDoc:
+```bash
+npm install --save-dev swagger-ui-express swagger-jsdoc
+npm install --save-dev @types/swagger-ui-express @types/swagger-jsdoc
+```
+
+2. Create `src/swagger.ts`:
+
+```typescript
+import swaggerJSDoc from 'swagger-jsdoc';
+
+const options: swaggerJSDoc.Options = {
+  definition: {
+    openapi: '3.0.0',
+    info: {
+      title: 'User CRUD API',
+      version: '1.0.0',
+      description: 'A simple Express API for managing users',
+    },
+    servers: [
+      {
+        url: 'http://localhost:3000',
+        description: 'Development server',
+      },
+    ],
+  },
+  apis: ['./src/routes/*.ts', './src/models/*.ts'],
+};
+
+export const swaggerSpec = swaggerJSDoc(options);
+```
+
+3. Update `src/app.ts` to include Swagger UI:
+
+```typescript
+import express, { Application } from 'express';
+import swaggerUi from 'swagger-ui-express';
+import { swaggerSpec } from './swagger';
+import userRoutes from './routes/userRoutes';
+import { errorHandler, notFoundHandler } from './middleware/errorHandler';
+
+const app: Application = express();
+
+// Middleware
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+// Swagger documentation
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
+// Routes
+app.get('/', (req, res) => {
+  res.json({ message: 'User CRUD API is running' });
+});
+
+app.use('/api/users', userRoutes);
+
+// Error handling
+app.use(notFoundHandler);
+app.use(errorHandler);
+
+export default app;
+```
+
+4. Add JSDoc comments to the routes in `src/routes/userRoutes.ts`:
+
+```typescript
+import { Router } from 'express';
+import { UserController } from '../controllers/UserController';
+import { validateUserInput, validateIdParam } from '../middleware/validation';
+
+const router = Router();
+
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     User:
+ *       type: object
+ *       required:
+ *         - name
+ *         - email
+ *       properties:
+ *         id:
+ *           type: integer
+ *           description: The auto-generated id of the user
+ *         name:
+ *           type: string
+ *           description: The name of the user
+ *         email:
+ *           type: string
+ *           description: The email of the user
+ *       example:
+ *         id: 1
+ *         name: John Doe
+ *         email: john@example.com
+ */
+
+/**
+ * @swagger
+ * /api/users:
+ *   get:
+ *     summary: Returns the list of all users
+ *     tags: [Users]
+ *     responses:
+ *       200:
+ *         description: The list of users
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/User'
+ */
+router.get('/', UserController.getAllUsers);
+
+/**
+ * @swagger
+ * /api/users/{id}:
+ *   get:
+ *     summary: Get a user by id
+ *     tags: [Users]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: integer
+ *         required: true
+ *         description: The user id
+ *     responses:
+ *       200:
+ *         description: The user description by id
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/User'
+ *       404:
+ *         description: The user was not found
+ *       400:
+ *         description: Invalid ID format
+ */
+router.get('/:id', validateIdParam, UserController.getUserById);
+
+/**
+ * @swagger
+ * /api/users:
+ *   post:
+ *     summary: Create a new user
+ *     tags: [Users]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - name
+ *               - email
+ *             properties:
+ *               name:
+ *                 type: string
+ *               email:
+ *                 type: string
+ *     responses:
+ *       201:
+ *         description: The user was successfully created
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/User'
+ *       400:
+ *         description: Invalid input data
+ */
+router.post('/', validateUserInput, UserController.createUser);
+
+// Add similar JSDoc comments for PUT and DELETE endpoints
+
+export default router;
+```
+
+# Test Strategy:
+1. Start the server with `npm run dev`
+2. Navigate to http://localhost:3000/api-docs in a web browser
+3. Verify that the Swagger UI loads correctly and displays all API endpoints
+4. Test each endpoint directly from the Swagger UI to ensure they work as expected
+5. Verify that the documentation accurately describes the request/response formats and error cases

@@ -1,0 +1,133 @@
+# Task ID: 6
+# Title: Implement Input Validation Middleware
+# Status: done
+# Dependencies: 3
+# Priority: medium
+# Description: Create middleware for validating user input data to ensure data integrity.
+# Details:
+Create `src/middleware/validation.ts`:
+
+```typescript
+import { Request, Response, NextFunction } from 'express';
+
+export const validateUserInput = (req: Request, res: Response, next: NextFunction): void => {
+  const { name, email } = req.body;
+  const errors: string[] = [];
+
+  // For POST requests, both name and email are required
+  if (req.method === 'POST') {
+    if (!name) errors.push('Name is required');
+    if (!email) errors.push('Email is required');
+  }
+
+  // For PUT requests, at least one field should be provided
+  if (req.method === 'PUT') {
+    if (!name && !email) {
+      errors.push('At least one field (name or email) is required for update');
+    }
+  }
+
+  // Validate name if provided
+  if (name !== undefined) {
+    if (typeof name !== 'string') {
+      errors.push('Name must be a string');
+    } else if (name.trim().length < 2) {
+      errors.push('Name must be at least 2 characters long');
+    }
+  }
+
+  // Validate email if provided
+  if (email !== undefined) {
+    if (typeof email !== 'string') {
+      errors.push('Email must be a string');
+    } else {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        errors.push('Invalid email format');
+      }
+    }
+  }
+
+  if (errors.length > 0) {
+    return res.status(400).json({ errors });
+  }
+
+  next();
+};
+
+export const validateIdParam = (req: Request, res: Response, next: NextFunction): void => {
+  const id = parseInt(req.params.id);
+  
+  if (isNaN(id)) {
+    return res.status(400).json({ error: 'Invalid ID format' });
+  }
+  
+  next();
+};
+```
+
+Update `src/routes/userRoutes.ts` to use the validation middleware:
+
+```typescript
+import { Router } from 'express';
+import { UserController } from '../controllers/UserController';
+import { validateUserInput, validateIdParam } from '../middleware/validation';
+
+const router = Router();
+
+// GET /api/users - List all users
+router.get('/', UserController.getAllUsers);
+
+// GET /api/users/:id - Get user by ID
+router.get('/:id', validateIdParam, UserController.getUserById);
+
+// POST /api/users - Create new user
+router.post('/', validateUserInput, UserController.createUser);
+
+// PUT /api/users/:id - Update user
+router.put('/:id', validateIdParam, validateUserInput, UserController.updateUser);
+
+// DELETE /api/users/:id - Delete user
+router.delete('/:id', validateIdParam, UserController.deleteUser);
+
+export default router;
+```
+
+Update the UserController to simplify validation logic since it's now handled by middleware:
+
+```typescript
+// Inside UserController.ts, simplify the methods:
+
+// Create new user
+static createUser(req: Request, res: Response): void {
+  const { name, email } = req.body;
+  const newUser = UserStore.create({ name, email });
+  res.status(201).json(newUser);
+}
+
+// Update user
+static updateUser(req: Request, res: Response): void {
+  const id = parseInt(req.params.id);
+  const { name, email } = req.body;
+  
+  const updatedUser = UserStore.update(id, { name, email });
+  
+  if (!updatedUser) {
+    res.status(404).json({ error: 'User not found' });
+    return;
+  }
+  
+  res.json(updatedUser);
+}
+```
+
+# Test Strategy:
+Create unit tests in `src/__tests__/middleware/validation.test.ts` to verify:
+1. validateUserInput correctly validates required fields for POST requests
+2. validateUserInput correctly validates optional fields for PUT requests
+3. validateUserInput rejects invalid email formats
+4. validateUserInput rejects invalid name formats
+5. validateIdParam correctly validates numeric IDs
+6. validateIdParam rejects non-numeric IDs
+
+Use mock Request, Response, and NextFunction objects to simulate Express behavior.

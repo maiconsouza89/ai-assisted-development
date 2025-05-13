@@ -1,0 +1,83 @@
+# Task ID: 3
+# Title: Setup Express Server Configuration
+# Status: done
+# Dependencies: 1
+# Priority: high
+# Description: Configure the Express server with basic middleware and error handling.
+# Details:
+1. Create `src/app.ts`:
+```typescript
+import express, { Application, Request, Response, NextFunction } from 'express';
+
+const app: Application = express();
+
+// Middleware
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+// Basic route for testing
+app.get('/', (req: Request, res: Response) => {
+  res.json({ message: 'User CRUD API is running' });
+});
+
+// Error handling middleware
+app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
+  console.error(err.stack);
+  res.status(500).json({
+    error: 'Internal Server Error',
+    message: err.message
+  });
+});
+
+// 404 handler
+app.use((req: Request, res: Response) => {
+  res.status(404).json({
+    error: 'Not Found',
+    message: 'The requested resource does not exist'
+  });
+});
+
+export default app;
+```
+
+2. Create `src/server.ts`:
+```typescript
+import app from './app';
+
+const PORT = process.env.PORT || 3000;
+
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
+});
+```
+
+# Test Strategy:
+1. Test the server setup by running `npm run dev` and verifying the server starts without errors.
+2. Make a GET request to the root endpoint (/) and verify it returns the expected JSON response.
+3. Test error handling by making a request to a non-existent endpoint and verifying the 404 response.
+
+# Subtasks:
+## 3.1. Create app.ts with middleware and error handling [completed]
+### Dependencies: None
+### Description: Implemented app.ts with JSON processing middleware, basic test route returning JSON, error handling middleware (500), and 404 handler for non-existent routes.
+### Details:
+
+
+## 3.2. Create server.ts for application startup [completed]
+### Dependencies: None
+### Description: Implemented server.ts with app import, PORT configuration from environment variables (with fallback to 3000), and server initialization with console logging.
+### Details:
+
+
+## 3.3. Verify project structure [completed]
+### Dependencies: None
+### Description: Confirmed that the project structure includes the necessary folders: controllers, models, routes, and __tests__.
+### Details:
+
+
+## 3.4. Test server functionality [completed]
+### Dependencies: None
+### Description: Tested server startup, root endpoint response, and error handling for non-existent routes.
+### Details:
+
+

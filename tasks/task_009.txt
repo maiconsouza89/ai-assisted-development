@@ -1,0 +1,111 @@
+# Task ID: 9
+# Title: Implement Unit Tests for User Controller
+# Status: done
+# Dependencies: 4
+# Priority: medium
+# Description: Create comprehensive unit tests for the UserController to ensure correct handling of HTTP requests and responses.
+# Details:
+Create `src/__tests__/controllers/UserController.test.ts`:
+
+```typescript
+import { Request, Response } from 'express';
+import { UserController } from '../../controllers/UserController';
+import { UserStore } from '../../models/User';
+
+// Mock the UserStore
+jest.mock('../../models/User', () => {
+  return {
+    UserStore: {
+      getAll: jest.fn(),
+      getById: jest.fn(),
+      create: jest.fn(),
+      update: jest.fn(),
+      delete: jest.fn()
+    }
+  };
+});
+
+describe('UserController', () => {
+  let mockRequest: Partial<Request>;
+  let mockResponse: Partial<Response>;
+  let responseObject: any = {};
+
+  beforeEach(() => {
+    // Reset mocks
+    jest.clearAllMocks();
+    
+    // Setup mock request and response
+    mockRequest = {};
+    responseObject = {
+      statusCode: 200,
+      json: jest.fn().mockReturnThis(),
+      status: jest.fn().mockImplementation((code) => {
+        responseObject.statusCode = code;
+        return responseObject;
+      }),
+      send: jest.fn().mockReturnThis()
+    };
+    mockResponse = responseObject;
+  });
+
+  describe('getAllUsers', () => {
+    it('should return all users', () => {
+      const mockUsers = [
+        { id: 1, name: 'John Doe', email: 'john@example.com' },
+        { id: 2, name: 'Jane Doe', email: 'jane@example.com' }
+      ];
+      
+      (UserStore.getAll as jest.Mock).mockReturnValue(mockUsers);
+      
+      UserController.getAllUsers(mockRequest as Request, mockResponse as Response);
+      
+      expect(UserStore.getAll).toHaveBeenCalled();
+      expect(mockResponse.json).toHaveBeenCalledWith(mockUsers);
+    });
+  });
+
+  describe('getUserById', () => {
+    it('should return a user when valid ID is provided', () => {
+      const mockUser = { id: 1, name: 'John Doe', email: 'john@example.com' };
+      
+      mockRequest.params = { id: '1' };
+      (UserStore.getById as jest.Mock).mockReturnValue(mockUser);
+      
+      UserController.getUserById(mockRequest as Request, mockResponse as Response);
+      
+      expect(UserStore.getById).toHaveBeenCalledWith(1);
+      expect(mockResponse.json).toHaveBeenCalledWith(mockUser);
+    });
+
+    it('should return 404 when user is not found', () => {
+      mockRequest.params = { id: '999' };
+      (UserStore.getById as jest.Mock).mockReturnValue(undefined);
+      
+      UserController.getUserById(mockRequest as Request, mockResponse as Response);
+      
+      expect(UserStore.getById).toHaveBeenCalledWith(999);
+      expect(mockResponse.status).toHaveBeenCalledWith(404);
+      expect(mockResponse.json).toHaveBeenCalledWith(expect.objectContaining({
+        error: expect.any(String)
+      }));
+    });
+
+    it('should return 400 when ID is invalid', () => {
+      mockRequest.params = { id: 'invalid' };
+      
+      UserController.getUserById(mockRequest as Request, mockResponse as Response);
+      
+      expect(UserStore.getById).not.toHaveBeenCalled();
+      expect(mockResponse.status).toHaveBeenCalledWith(400);
+      expect(mockResponse.json).toHaveBeenCalledWith(expect.objectContaining({
+        error: expect.any(String)
+      }));
+    });
+  });
+
+  // Similar tests for createUser, updateUser, and deleteUser methods
+});
+```
+
+# Test Strategy:
+Run the tests using Jest with the command `npm test` or `npx jest src/__tests__/controllers/UserController.test.ts`. Verify that all tests pass, indicating that the UserController functions correctly. Check test coverage to ensure all methods, edge cases, and error handling are tested.

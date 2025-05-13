@@ -1,0 +1,99 @@
+# Task ID: 2
+# Title: Implement User Model
+# Status: done
+# Dependencies: 1
+# Priority: high
+# Description: Create the User model with the required properties (id, name, email) and methods for data manipulation in memory.
+# Details:
+Create the User model in `src/models/User.ts`:
+
+```typescript
+export interface IUser {
+  id: number;
+  name: string;
+  email: string;
+}
+
+export class User implements IUser {
+  id: number;
+  name: string;
+  email: string;
+
+  constructor(name: string, email: string, id?: number) {
+    this.name = name;
+    this.email = email;
+    this.id = id || Date.now();
+  }
+}
+
+// In-memory storage
+export class UserStore {
+  private static users: IUser[] = [];
+  private static lastId: number = 0;
+
+  static getAll(): IUser[] {
+    return this.users;
+  }
+
+  static getById(id: number): IUser | undefined {
+    return this.users.find(user => user.id === id);
+  }
+
+  static create(userData: Omit<IUser, 'id'>): IUser {
+    const id = ++this.lastId;
+    const newUser = { id, ...userData };
+    this.users.push(newUser);
+    return newUser;
+  }
+
+  static update(id: number, userData: Partial<Omit<IUser, 'id'>>): IUser | undefined {
+    const index = this.users.findIndex(user => user.id === id);
+    if (index === -1) return undefined;
+    
+    this.users[index] = { ...this.users[index], ...userData };
+    return this.users[index];
+  }
+
+  static delete(id: number): boolean {
+    const initialLength = this.users.length;
+    this.users = this.users.filter(user => user.id !== id);
+    return initialLength !== this.users.length;
+  }
+}
+```
+
+# Test Strategy:
+Create unit tests in `src/__tests__/models/User.test.ts` to verify:
+1. User object creation with correct properties
+2. User object creation with provided ID
+3. UserStore.create() adds a user and returns it with an ID
+4. UserStore.getAll() returns all users
+5. UserStore.getById() returns the correct user
+6. UserStore.update() modifies user data correctly
+7. UserStore.delete() removes a user correctly
+
+# Subtasks:
+## 2.1. Create IUser interface [completed]
+### Dependencies: None
+### Description: Implement the IUser interface with id, name, and email properties
+### Details:
+
+
+## 2.2. Implement User class [completed]
+### Dependencies: None
+### Description: Create the User class that implements the IUser interface
+### Details:
+
+
+## 2.3. Implement UserStore class [completed]
+### Dependencies: None
+### Description: Create the UserStore class with methods for in-memory data manipulation
+### Details:
+
+
+## 2.4. Write unit tests [completed]
+### Dependencies: None
+### Description: Create and run unit tests for all User model functionality
+### Details:
+
+

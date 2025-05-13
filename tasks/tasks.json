@@ -1,0 +1,313 @@
+{
+  "tasks": [
+    {
+      "id": 1,
+      "title": "Setup Project Structure and Dependencies",
+      "description": "Initialize the TypeScript Express project with the required dependencies and folder structure as specified in the PRD.",
+      "status": "done",
+      "dependencies": [],
+      "priority": "high",
+      "details": "1. Initialize a new Node.js project with `npm init -y` ✓\n2. Install dependencies: ✓\n   ```bash\n   npm install express (5.1.0)\n   npm install --save-dev typescript (5.8.3) @types/node (22.15.17) @types/express (5.0.1) ts-node (10.9.2) nodemon (3.1.10) jest (29.7.0) @types/jest (29.5.14) ts-jest (29.3.2)\n   ```\n3. Create tsconfig.json: ✓\n   ```json\n   {\n     \"compilerOptions\": {\n       \"target\": \"es6\",\n       \"module\": \"commonjs\",\n       \"outDir\": \"./dist\",\n       \"rootDir\": \"./src\",\n       \"strict\": true,\n       \"esModuleInterop\": true,\n       \"skipLibCheck\": true,\n       \"forceConsistentCasingInFileNames\": true\n     },\n     \"include\": [\"src/**/*\"],\n     \"exclude\": [\"node_modules\", \"**/*.test.ts\"]\n   }\n   ```\n4. Create the folder structure as specified in the PRD: ✓\n   ```\n   src/\n     ├── controllers/\n     ├── models/\n     ├── routes/\n     ├── __tests__/\n     │     ├── models/\n     │     └── controllers/\n     ├── app.ts\n     └── server.ts\n   ```\n5. Configure package.json scripts: ✓\n   ```json\n   \"scripts\": {\n     \"start\": \"node dist/server.js\",\n     \"dev\": \"nodemon src/server.ts\",\n     \"build\": \"tsc\",\n     \"test\": \"jest\"\n   }\n   ```\n6. Configure Jest in package.json: ✓\n   ```json\n   \"jest\": {\n     \"preset\": \"ts-jest\",\n     \"testEnvironment\": \"node\",\n     \"testMatch\": [\"**/__tests__/**/*.test.ts\"]\n   }\n   ```",
+      "testStrategy": "All tests have been completed successfully:\n- Verified that all dependencies are installed correctly with `npm list`\n- Confirmed the project structure is created according to the specifications\n- Tested the TypeScript configuration by running `npx tsc --noEmit` with no errors\n- Verified the server starts correctly with `npm run dev`\n- Confirmed the main route is functioning properly",
+      "subtasks": [
+        {
+          "id": "1.1",
+          "title": "Initialize Node.js project",
+          "status": "completed"
+        },
+        {
+          "id": "1.2",
+          "title": "Install required dependencies",
+          "status": "completed"
+        },
+        {
+          "id": "1.3",
+          "title": "Configure TypeScript (tsconfig.json)",
+          "status": "completed"
+        },
+        {
+          "id": "1.4",
+          "title": "Create folder structure",
+          "status": "completed"
+        },
+        {
+          "id": "1.5",
+          "title": "Configure package.json scripts",
+          "status": "completed"
+        },
+        {
+          "id": "1.6",
+          "title": "Configure Jest",
+          "status": "completed"
+        },
+        {
+          "id": "1.7",
+          "title": "Verify server startup",
+          "status": "completed"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "title": "Implement User Model",
+      "description": "Create the User model with the required properties (id, name, email) and methods for data manipulation in memory.",
+      "status": "done",
+      "dependencies": [
+        1
+      ],
+      "priority": "high",
+      "details": "Create the User model in `src/models/User.ts`:\n\n```typescript\nexport interface IUser {\n  id: number;\n  name: string;\n  email: string;\n}\n\nexport class User implements IUser {\n  id: number;\n  name: string;\n  email: string;\n\n  constructor(name: string, email: string, id?: number) {\n    this.name = name;\n    this.email = email;\n    this.id = id || Date.now();\n  }\n}\n\n// In-memory storage\nexport class UserStore {\n  private static users: IUser[] = [];\n  private static lastId: number = 0;\n\n  static getAll(): IUser[] {\n    return this.users;\n  }\n\n  static getById(id: number): IUser | undefined {\n    return this.users.find(user => user.id === id);\n  }\n\n  static create(userData: Omit<IUser, 'id'>): IUser {\n    const id = ++this.lastId;\n    const newUser = { id, ...userData };\n    this.users.push(newUser);\n    return newUser;\n  }\n\n  static update(id: number, userData: Partial<Omit<IUser, 'id'>>): IUser | undefined {\n    const index = this.users.findIndex(user => user.id === id);\n    if (index === -1) return undefined;\n    \n    this.users[index] = { ...this.users[index], ...userData };\n    return this.users[index];\n  }\n\n  static delete(id: number): boolean {\n    const initialLength = this.users.length;\n    this.users = this.users.filter(user => user.id !== id);\n    return initialLength !== this.users.length;\n  }\n}\n```",
+      "testStrategy": "Create unit tests in `src/__tests__/models/User.test.ts` to verify:\n1. User object creation with correct properties\n2. User object creation with provided ID\n3. UserStore.create() adds a user and returns it with an ID\n4. UserStore.getAll() returns all users\n5. UserStore.getById() returns the correct user\n6. UserStore.update() modifies user data correctly\n7. UserStore.delete() removes a user correctly",
+      "subtasks": [
+        {
+          "id": 2.1,
+          "title": "Create IUser interface",
+          "description": "Implement the IUser interface with id, name, and email properties",
+          "status": "completed"
+        },
+        {
+          "id": 2.2,
+          "title": "Implement User class",
+          "description": "Create the User class that implements the IUser interface",
+          "status": "completed"
+        },
+        {
+          "id": 2.3,
+          "title": "Implement UserStore class",
+          "description": "Create the UserStore class with methods for in-memory data manipulation",
+          "status": "completed"
+        },
+        {
+          "id": 2.4,
+          "title": "Write unit tests",
+          "description": "Create and run unit tests for all User model functionality",
+          "status": "completed"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "title": "Setup Express Server Configuration",
+      "description": "Configure the Express server with basic middleware and error handling.",
+      "status": "done",
+      "dependencies": [
+        1
+      ],
+      "priority": "high",
+      "details": "1. Create `src/app.ts`:\n```typescript\nimport express, { Application, Request, Response, NextFunction } from 'express';\n\nconst app: Application = express();\n\n// Middleware\napp.use(express.json());\napp.use(express.urlencoded({ extended: true }));\n\n// Basic route for testing\napp.get('/', (req: Request, res: Response) => {\n  res.json({ message: 'User CRUD API is running' });\n});\n\n// Error handling middleware\napp.use((err: Error, req: Request, res: Response, next: NextFunction) => {\n  console.error(err.stack);\n  res.status(500).json({\n    error: 'Internal Server Error',\n    message: err.message\n  });\n});\n\n// 404 handler\napp.use((req: Request, res: Response) => {\n  res.status(404).json({\n    error: 'Not Found',\n    message: 'The requested resource does not exist'\n  });\n});\n\nexport default app;\n```\n\n2. Create `src/server.ts`:\n```typescript\nimport app from './app';\n\nconst PORT = process.env.PORT || 3000;\n\napp.listen(PORT, () => {\n  console.log(`Server is running on port ${PORT}`);\n});\n```",
+      "testStrategy": "1. Test the server setup by running `npm run dev` and verifying the server starts without errors.\n2. Make a GET request to the root endpoint (/) and verify it returns the expected JSON response.\n3. Test error handling by making a request to a non-existent endpoint and verifying the 404 response.",
+      "subtasks": [
+        {
+          "id": 3.1,
+          "title": "Create app.ts with middleware and error handling",
+          "status": "completed",
+          "description": "Implemented app.ts with JSON processing middleware, basic test route returning JSON, error handling middleware (500), and 404 handler for non-existent routes."
+        },
+        {
+          "id": 3.2,
+          "title": "Create server.ts for application startup",
+          "status": "completed",
+          "description": "Implemented server.ts with app import, PORT configuration from environment variables (with fallback to 3000), and server initialization with console logging."
+        },
+        {
+          "id": 3.3,
+          "title": "Verify project structure",
+          "status": "completed",
+          "description": "Confirmed that the project structure includes the necessary folders: controllers, models, routes, and __tests__."
+        },
+        {
+          "id": 3.4,
+          "title": "Test server functionality",
+          "status": "completed",
+          "description": "Tested server startup, root endpoint response, and error handling for non-existent routes."
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "title": "Implement User Controller",
+      "description": "Create the UserController with methods for handling CRUD operations.",
+      "details": "Create `src/controllers/UserController.ts`:\n\n```typescript\nimport { Request, Response } from 'express';\nimport { UserStore, IUser } from '../models/User';\n\nexport class UserController {\n  // Get all users\n  static getAllUsers(req: Request, res: Response): void {\n    const users = UserStore.getAll();\n    res.json(users);\n  }\n\n  // Get user by ID\n  static getUserById(req: Request, res: Response): void {\n    const id = parseInt(req.params.id);\n    \n    if (isNaN(id)) {\n      res.status(400).json({ error: 'Invalid ID format' });\n      return;\n    }\n    \n    const user = UserStore.getById(id);\n    \n    if (!user) {\n      res.status(404).json({ error: 'User not found' });\n      return;\n    }\n    \n    res.json(user);\n  }\n\n  // Create new user\n  static createUser(req: Request, res: Response): void {\n    const { name, email } = req.body;\n    \n    // Validate input\n    if (!name || !email) {\n      res.status(400).json({ error: 'Name and email are required' });\n      return;\n    }\n    \n    // Validate email format\n    const emailRegex = /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/;\n    if (!emailRegex.test(email)) {\n      res.status(400).json({ error: 'Invalid email format' });\n      return;\n    }\n    \n    const newUser = UserStore.create({ name, email });\n    res.status(201).json(newUser);\n  }\n\n  // Update user\n  static updateUser(req: Request, res: Response): void {\n    const id = parseInt(req.params.id);\n    const { name, email } = req.body;\n    \n    if (isNaN(id)) {\n      res.status(400).json({ error: 'Invalid ID format' });\n      return;\n    }\n    \n    // Validate that at least one field is provided\n    if (!name && !email) {\n      res.status(400).json({ error: 'At least one field (name or email) is required for update' });\n      return;\n    }\n    \n    // Validate email format if provided\n    if (email) {\n      const emailRegex = /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/;\n      if (!emailRegex.test(email)) {\n        res.status(400).json({ error: 'Invalid email format' });\n        return;\n      }\n    }\n    \n    const updatedUser = UserStore.update(id, { name, email });\n    \n    if (!updatedUser) {\n      res.status(404).json({ error: 'User not found' });\n      return;\n    }\n    \n    res.json(updatedUser);\n  }\n\n  // Delete user\n  static deleteUser(req: Request, res: Response): void {\n    const id = parseInt(req.params.id);\n    \n    if (isNaN(id)) {\n      res.status(400).json({ error: 'Invalid ID format' });\n      return;\n    }\n    \n    const deleted = UserStore.delete(id);\n    \n    if (!deleted) {\n      res.status(404).json({ error: 'User not found' });\n      return;\n    }\n    \n    res.status(204).send();\n  }\n}\n```",
+      "testStrategy": "Create unit tests in `src/__tests__/controllers/UserController.test.ts` to verify:\n1. getAllUsers returns all users\n2. getUserById returns the correct user or 404 for non-existent users\n3. createUser adds a new user with validation\n4. updateUser modifies user data with validation\n5. deleteUser removes a user correctly\n\nMock the Request and Response objects using Jest mocks to simulate Express behavior.",
+      "priority": "high",
+      "dependencies": [
+        2
+      ],
+      "status": "done",
+      "subtasks": []
+    },
+    {
+      "id": 5,
+      "title": "Implement User Routes",
+      "description": "Create the routes for the User API endpoints as specified in the PRD.",
+      "details": "Create `src/routes/userRoutes.ts`:\n\n```typescript\nimport { Router } from 'express';\nimport { UserController } from '../controllers/UserController';\n\nconst router = Router();\n\n// GET /api/users - List all users\nrouter.get('/', UserController.getAllUsers);\n\n// GET /api/users/:id - Get user by ID\nrouter.get('/:id', UserController.getUserById);\n\n// POST /api/users - Create new user\nrouter.post('/', UserController.createUser);\n\n// PUT /api/users/:id - Update user\nrouter.put('/:id', UserController.updateUser);\n\n// DELETE /api/users/:id - Delete user\nrouter.delete('/:id', UserController.deleteUser);\n\nexport default router;\n```\n\nUpdate `src/app.ts` to include the routes:\n\n```typescript\nimport express, { Application, Request, Response, NextFunction } from 'express';\nimport userRoutes from './routes/userRoutes';\n\nconst app: Application = express();\n\n// Middleware\napp.use(express.json());\napp.use(express.urlencoded({ extended: true }));\n\n// Routes\napp.get('/', (req: Request, res: Response) => {\n  res.json({ message: 'User CRUD API is running' });\n});\n\napp.use('/api/users', userRoutes);\n\n// Error handling middleware\napp.use((err: Error, req: Request, res: Response, next: NextFunction) => {\n  console.error(err.stack);\n  res.status(500).json({\n    error: 'Internal Server Error',\n    message: err.message\n  });\n});\n\n// 404 handler\napp.use((req: Request, res: Response) => {\n  res.status(404).json({\n    error: 'Not Found',\n    message: 'The requested resource does not exist'\n  });\n});\n\nexport default app;\n```",
+      "testStrategy": "Test the routes by making HTTP requests to each endpoint and verifying the responses:\n1. GET /api/users should return an array (empty initially)\n2. POST /api/users with valid data should create a user\n3. GET /api/users/:id with a valid ID should return a user\n4. PUT /api/users/:id with valid data should update a user\n5. DELETE /api/users/:id should remove a user\n\nUse tools like Postman or curl for manual testing, or implement integration tests using supertest.",
+      "priority": "high",
+      "dependencies": [
+        3,
+        4
+      ],
+      "status": "done",
+      "subtasks": []
+    },
+    {
+      "id": 6,
+      "title": "Implement Input Validation Middleware",
+      "description": "Create middleware for validating user input data to ensure data integrity.",
+      "details": "Create `src/middleware/validation.ts`:\n\n```typescript\nimport { Request, Response, NextFunction } from 'express';\n\nexport const validateUserInput = (req: Request, res: Response, next: NextFunction): void => {\n  const { name, email } = req.body;\n  const errors: string[] = [];\n\n  // For POST requests, both name and email are required\n  if (req.method === 'POST') {\n    if (!name) errors.push('Name is required');\n    if (!email) errors.push('Email is required');\n  }\n\n  // For PUT requests, at least one field should be provided\n  if (req.method === 'PUT') {\n    if (!name && !email) {\n      errors.push('At least one field (name or email) is required for update');\n    }\n  }\n\n  // Validate name if provided\n  if (name !== undefined) {\n    if (typeof name !== 'string') {\n      errors.push('Name must be a string');\n    } else if (name.trim().length < 2) {\n      errors.push('Name must be at least 2 characters long');\n    }\n  }\n\n  // Validate email if provided\n  if (email !== undefined) {\n    if (typeof email !== 'string') {\n      errors.push('Email must be a string');\n    } else {\n      const emailRegex = /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/;\n      if (!emailRegex.test(email)) {\n        errors.push('Invalid email format');\n      }\n    }\n  }\n\n  if (errors.length > 0) {\n    return res.status(400).json({ errors });\n  }\n\n  next();\n};\n\nexport const validateIdParam = (req: Request, res: Response, next: NextFunction): void => {\n  const id = parseInt(req.params.id);\n  \n  if (isNaN(id)) {\n    return res.status(400).json({ error: 'Invalid ID format' });\n  }\n  \n  next();\n};\n```\n\nUpdate `src/routes/userRoutes.ts` to use the validation middleware:\n\n```typescript\nimport { Router } from 'express';\nimport { UserController } from '../controllers/UserController';\nimport { validateUserInput, validateIdParam } from '../middleware/validation';\n\nconst router = Router();\n\n// GET /api/users - List all users\nrouter.get('/', UserController.getAllUsers);\n\n// GET /api/users/:id - Get user by ID\nrouter.get('/:id', validateIdParam, UserController.getUserById);\n\n// POST /api/users - Create new user\nrouter.post('/', validateUserInput, UserController.createUser);\n\n// PUT /api/users/:id - Update user\nrouter.put('/:id', validateIdParam, validateUserInput, UserController.updateUser);\n\n// DELETE /api/users/:id - Delete user\nrouter.delete('/:id', validateIdParam, UserController.deleteUser);\n\nexport default router;\n```\n\nUpdate the UserController to simplify validation logic since it's now handled by middleware:\n\n```typescript\n// Inside UserController.ts, simplify the methods:\n\n// Create new user\nstatic createUser(req: Request, res: Response): void {\n  const { name, email } = req.body;\n  const newUser = UserStore.create({ name, email });\n  res.status(201).json(newUser);\n}\n\n// Update user\nstatic updateUser(req: Request, res: Response): void {\n  const id = parseInt(req.params.id);\n  const { name, email } = req.body;\n  \n  const updatedUser = UserStore.update(id, { name, email });\n  \n  if (!updatedUser) {\n    res.status(404).json({ error: 'User not found' });\n    return;\n  }\n  \n  res.json(updatedUser);\n}\n```",
+      "testStrategy": "Create unit tests in `src/__tests__/middleware/validation.test.ts` to verify:\n1. validateUserInput correctly validates required fields for POST requests\n2. validateUserInput correctly validates optional fields for PUT requests\n3. validateUserInput rejects invalid email formats\n4. validateUserInput rejects invalid name formats\n5. validateIdParam correctly validates numeric IDs\n6. validateIdParam rejects non-numeric IDs\n\nUse mock Request, Response, and NextFunction objects to simulate Express behavior.",
+      "priority": "medium",
+      "dependencies": [
+        3
+      ],
+      "status": "done",
+      "subtasks": []
+    },
+    {
+      "id": 7,
+      "title": "Implement Error Handling Middleware",
+      "description": "Create comprehensive error handling middleware to provide clear error messages and appropriate HTTP status codes.",
+      "details": "Create `src/middleware/errorHandler.ts`:\n\n```typescript\nimport { Request, Response, NextFunction } from 'express';\n\n// Custom error class for API errors\nexport class ApiError extends Error {\n  statusCode: number;\n  \n  constructor(statusCode: number, message: string) {\n    super(message);\n    this.statusCode = statusCode;\n    this.name = 'ApiError';\n  }\n}\n\n// Error handler middleware\nexport const errorHandler = (err: Error, req: Request, res: Response, next: NextFunction): void => {\n  console.error(`Error: ${err.message}`);\n  console.error(err.stack);\n  \n  if (err instanceof ApiError) {\n    res.status(err.statusCode).json({\n      error: err.name,\n      message: err.message\n    });\n    return;\n  }\n  \n  // Default to 500 internal server error for unhandled errors\n  res.status(500).json({\n    error: 'InternalServerError',\n    message: 'An unexpected error occurred'\n  });\n};\n\n// 404 handler for routes that don't exist\nexport const notFoundHandler = (req: Request, res: Response): void => {\n  res.status(404).json({\n    error: 'NotFound',\n    message: 'The requested resource does not exist'\n  });\n};\n```\n\nUpdate `src/app.ts` to use the error handling middleware:\n\n```typescript\nimport express, { Application } from 'express';\nimport userRoutes from './routes/userRoutes';\nimport { errorHandler, notFoundHandler } from './middleware/errorHandler';\n\nconst app: Application = express();\n\n// Middleware\napp.use(express.json());\napp.use(express.urlencoded({ extended: true }));\n\n// Routes\napp.get('/', (req, res) => {\n  res.json({ message: 'User CRUD API is running' });\n});\n\napp.use('/api/users', userRoutes);\n\n// Error handling\napp.use(notFoundHandler);\napp.use(errorHandler);\n\nexport default app;\n```\n\nUpdate the UserController to use the ApiError class:\n\n```typescript\nimport { Request, Response, NextFunction } from 'express';\nimport { UserStore, IUser } from '../models/User';\nimport { ApiError } from '../middleware/errorHandler';\n\nexport class UserController {\n  // Get all users\n  static getAllUsers(req: Request, res: Response): void {\n    const users = UserStore.getAll();\n    res.json(users);\n  }\n\n  // Get user by ID\n  static getUserById(req: Request, res: Response, next: NextFunction): void {\n    try {\n      const id = parseInt(req.params.id);\n      const user = UserStore.getById(id);\n      \n      if (!user) {\n        throw new ApiError(404, 'User not found');\n      }\n      \n      res.json(user);\n    } catch (error) {\n      next(error);\n    }\n  }\n\n  // Other methods similarly updated to use try/catch and ApiError\n}\n```",
+      "testStrategy": "Create unit tests in `src/__tests__/middleware/errorHandler.test.ts` to verify:\n1. ApiError correctly sets status code and message\n2. errorHandler middleware returns the correct status code and error format for ApiError instances\n3. errorHandler middleware returns 500 status for generic errors\n4. notFoundHandler middleware returns 404 status with the correct error format\n\nUse mock Request, Response, and NextFunction objects to simulate Express behavior.",
+      "priority": "medium",
+      "dependencies": [
+        3
+      ],
+      "status": "done",
+      "subtasks": []
+    },
+    {
+      "id": 8,
+      "title": "Implement Unit Tests for User Model",
+      "description": "Create comprehensive unit tests for the User model to ensure data integrity and correct behavior.",
+      "details": "Create `src/__tests__/models/User.test.ts`:\n\n```typescript\nimport { User, UserStore, IUser } from '../../models/User';\n\ndescribe('User Model', () => {\n  // Clear users before each test\n  beforeEach(() => {\n    // Access the private users array for testing purposes\n    (UserStore as any).users = [];\n    (UserStore as any).lastId = 0;\n  });\n\n  describe('User class', () => {\n    it('should create a user with the provided properties', () => {\n      const user = new User('John Doe', 'john@example.com');\n      \n      expect(user.name).toBe('John Doe');\n      expect(user.email).toBe('john@example.com');\n      expect(user.id).toBeDefined();\n    });\n\n    it('should use the provided ID if given', () => {\n      const user = new User('John Doe', 'john@example.com', 123);\n      \n      expect(user.id).toBe(123);\n    });\n  });\n\n  describe('UserStore', () => {\n    it('should create a user and add it to the store', () => {\n      const user = UserStore.create({ name: 'John Doe', email: 'john@example.com' });\n      \n      expect(user.id).toBe(1);\n      expect(user.name).toBe('John Doe');\n      expect(user.email).toBe('john@example.com');\n      \n      const users = UserStore.getAll();\n      expect(users.length).toBe(1);\n      expect(users[0]).toEqual(user);\n    });\n\n    it('should get a user by ID', () => {\n      const user1 = UserStore.create({ name: 'John Doe', email: 'john@example.com' });\n      const user2 = UserStore.create({ name: 'Jane Doe', email: 'jane@example.com' });\n      \n      const foundUser = UserStore.getById(user1.id);\n      \n      expect(foundUser).toEqual(user1);\n    });\n\n    it('should return undefined for non-existent user ID', () => {\n      const foundUser = UserStore.getById(999);\n      \n      expect(foundUser).toBeUndefined();\n    });\n\n    it('should update a user', () => {\n      const user = UserStore.create({ name: 'John Doe', email: 'john@example.com' });\n      \n      const updatedUser = UserStore.update(user.id, { name: 'John Updated' });\n      \n      expect(updatedUser).toBeDefined();\n      expect(updatedUser?.name).toBe('John Updated');\n      expect(updatedUser?.email).toBe('john@example.com');\n      \n      // Verify the store was updated\n      const foundUser = UserStore.getById(user.id);\n      expect(foundUser?.name).toBe('John Updated');\n    });\n\n    it('should return undefined when updating non-existent user', () => {\n      const updatedUser = UserStore.update(999, { name: 'John Updated' });\n      \n      expect(updatedUser).toBeUndefined();\n    });\n\n    it('should delete a user', () => {\n      const user = UserStore.create({ name: 'John Doe', email: 'john@example.com' });\n      \n      const result = UserStore.delete(user.id);\n      \n      expect(result).toBe(true);\n      \n      // Verify the user was removed\n      const users = UserStore.getAll();\n      expect(users.length).toBe(0);\n    });\n\n    it('should return false when deleting non-existent user', () => \\{\n      const result = UserStore.delete(999);\n      \n      expect(result).toBe(false);\n    });\n  });\n});\n```",
+      "testStrategy": "Run the tests using Jest with the command `npm test` or `npx jest src/__tests__/models/User.test.ts`. Verify that all tests pass, indicating that the User model functions correctly. Check test coverage to ensure all methods and edge cases are tested.",
+      "priority": "medium",
+      "dependencies": [
+        2
+      ],
+      "status": "done",
+      "subtasks": []
+    },
+    {
+      "id": 9,
+      "title": "Implement Unit Tests for User Controller",
+      "description": "Create comprehensive unit tests for the UserController to ensure correct handling of HTTP requests and responses.",
+      "details": "Create `src/__tests__/controllers/UserController.test.ts`:\n\n```typescript\nimport { Request, Response } from 'express';\nimport { UserController } from '../../controllers/UserController';\nimport { UserStore } from '../../models/User';\n\n// Mock the UserStore\njest.mock('../../models/User', () => {\n  return {\n    UserStore: {\n      getAll: jest.fn(),\n      getById: jest.fn(),\n      create: jest.fn(),\n      update: jest.fn(),\n      delete: jest.fn()\n    }\n  };\n});\n\ndescribe('UserController', () => {\n  let mockRequest: Partial<Request>;\n  let mockResponse: Partial<Response>;\n  let responseObject: any = {};\n\n  beforeEach(() => {\n    // Reset mocks\n    jest.clearAllMocks();\n    \n    // Setup mock request and response\n    mockRequest = {};\n    responseObject = {\n      statusCode: 200,\n      json: jest.fn().mockReturnThis(),\n      status: jest.fn().mockImplementation((code) => {\n        responseObject.statusCode = code;\n        return responseObject;\n      }),\n      send: jest.fn().mockReturnThis()\n    };\n    mockResponse = responseObject;\n  });\n\n  describe('getAllUsers', () => {\n    it('should return all users', () => {\n      const mockUsers = [\n        { id: 1, name: 'John Doe', email: 'john@example.com' },\n        { id: 2, name: 'Jane Doe', email: 'jane@example.com' }\n      ];\n      \n      (UserStore.getAll as jest.Mock).mockReturnValue(mockUsers);\n      \n      UserController.getAllUsers(mockRequest as Request, mockResponse as Response);\n      \n      expect(UserStore.getAll).toHaveBeenCalled();\n      expect(mockResponse.json).toHaveBeenCalledWith(mockUsers);\n    });\n  });\n\n  describe('getUserById', () => {\n    it('should return a user when valid ID is provided', () => {\n      const mockUser = { id: 1, name: 'John Doe', email: 'john@example.com' };\n      \n      mockRequest.params = { id: '1' };\n      (UserStore.getById as jest.Mock).mockReturnValue(mockUser);\n      \n      UserController.getUserById(mockRequest as Request, mockResponse as Response);\n      \n      expect(UserStore.getById).toHaveBeenCalledWith(1);\n      expect(mockResponse.json).toHaveBeenCalledWith(mockUser);\n    });\n\n    it('should return 404 when user is not found', () => {\n      mockRequest.params = { id: '999' };\n      (UserStore.getById as jest.Mock).mockReturnValue(undefined);\n      \n      UserController.getUserById(mockRequest as Request, mockResponse as Response);\n      \n      expect(UserStore.getById).toHaveBeenCalledWith(999);\n      expect(mockResponse.status).toHaveBeenCalledWith(404);\n      expect(mockResponse.json).toHaveBeenCalledWith(expect.objectContaining({\n        error: expect.any(String)\n      }));\n    });\n\n    it('should return 400 when ID is invalid', () => {\n      mockRequest.params = { id: 'invalid' };\n      \n      UserController.getUserById(mockRequest as Request, mockResponse as Response);\n      \n      expect(UserStore.getById).not.toHaveBeenCalled();\n      expect(mockResponse.status).toHaveBeenCalledWith(400);\n      expect(mockResponse.json).toHaveBeenCalledWith(expect.objectContaining({\n        error: expect.any(String)\n      }));\n    });\n  });\n\n  // Similar tests for createUser, updateUser, and deleteUser methods\n});\n```",
+      "testStrategy": "Run the tests using Jest with the command `npm test` or `npx jest src/__tests__/controllers/UserController.test.ts`. Verify that all tests pass, indicating that the UserController functions correctly. Check test coverage to ensure all methods, edge cases, and error handling are tested.",
+      "priority": "medium",
+      "dependencies": [
+        4
+      ],
+      "status": "done",
+      "subtasks": []
+    },
+    {
+      "id": 10,
+      "title": "Implement Integration Tests",
+      "description": "Create integration tests to verify the complete request-response cycle for all API endpoints.",
+      "details": "1. Install supertest for API testing:\n```bash\nnpm install --save-dev supertest\n```\n\n2. Create `src/__tests__/integration/api.test.ts`:\n\n```typescript\nimport request from 'supertest';\nimport app from '../../app';\nimport { UserStore } from '../../models/User';\n\ndescribe('User API Integration Tests', () => {\n  // Clear users before each test\n  beforeEach(() => {\n    // Access the private users array for testing purposes\n    (UserStore as any).users = [];\n    (UserStore as any).lastId = 0;\n  });\n\n  describe('GET /api/users', () => {\n    it('should return an empty array when no users exist', async () => {\n      const response = await request(app).get('/api/users');\n      \n      expect(response.status).toBe(200);\n      expect(response.body).toEqual([]);\n    });\n\n    it('should return all users', async () => {\n      // Create test users\n      const user1 = UserStore.create({ name: 'John Doe', email: 'john@example.com' });\n      const user2 = UserStore.create({ name: 'Jane Doe', email: 'jane@example.com' });\n      \n      const response = await request(app).get('/api/users');\n      \n      expect(response.status).toBe(200);\n      expect(response.body.length).toBe(2);\n      expect(response.body).toEqual(expect.arrayContaining([\n        expect.objectContaining({ id: user1.id }),\n        expect.objectContaining({ id: user2.id })\n      ]));\n    });\n  });\n\n  describe('GET /api/users/:id', () => {\n    it('should return a user when valid ID is provided', async () => {\n      const user = UserStore.create({ name: 'John Doe', email: 'john@example.com' });\n      \n      const response = await request(app).get(`/api/users/${user.id}`);\n      \n      expect(response.status).toBe(200);\n      expect(response.body).toEqual(expect.objectContaining({\n        id: user.id,\n        name: user.name,\n        email: user.email\n      }));\n    });\n\n    it('should return 404 when user is not found', async () => {\n      const response = await request(app).get('/api/users/999');\n      \n      expect(response.status).toBe(404);\n      expect(response.body).toHaveProperty('error');\n    });\n\n    it('should return 400 when ID is invalid', async () => {\n      const response = await request(app).get('/api/users/invalid');\n      \n      expect(response.status).toBe(400);\n      expect(response.body).toHaveProperty('error');\n    });\n  });\n\n  describe('POST /api/users', () => {\n    it('should create a new user with valid data', async () => {\n      const userData = { name: 'John Doe', email: 'john@example.com' };\n      \n      const response = await request(app)\n        .post('/api/users')\n        .send(userData);\n      \n      expect(response.status).toBe(201);\n      expect(response.body).toEqual(expect.objectContaining({\n        id: expect.any(Number),\n        name: userData.name,\n        email: userData.email\n      }));\n      \n      // Verify the user was added to the store\n      const users = UserStore.getAll();\n      expect(users.length).toBe(1);\n    });\n\n    it('should return 400 when name is missing', async () => {\n      const response = await request(app)\n        .post('/api/users')\n        .send({ email: 'john@example.com' });\n      \n      expect(response.status).toBe(400);\n      expect(response.body).toHaveProperty('errors');\n    });\n\n    it('should return 400 when email is missing', async () => {\n      const response = await request(app)\n        .post('/api/users')\n        .send({ name: 'John Doe' });\n      \n      expect(response.status).toBe(400);\n      expect(response.body).toHaveProperty('errors');\n    });\n\n    it('should return 400 when email format is invalid', async () => {\n      const response = await request(app)\n        .post('/api/users')\n        .send({ name: 'John Doe', email: 'invalid-email' });\n      \n      expect(response.status).toBe(400);\n      expect(response.body).toHaveProperty('errors');\n    });\n  });\n\n  // Similar tests for PUT and DELETE endpoints\n});\n```",
+      "testStrategy": "Run the integration tests using Jest with the command `npm test` or `npx jest src/__tests__/integration/api.test.ts`. Verify that all tests pass, indicating that the API endpoints function correctly. Check test coverage to ensure all endpoints, edge cases, and error handling are tested.",
+      "priority": "medium",
+      "dependencies": [
+        5,
+        6,
+        7
+      ],
+      "status": "done",
+      "subtasks": []
+    },
+    {
+      "id": 11,
+      "title": "Implement API Documentation",
+      "description": "Create API documentation to help developers understand and use the API endpoints.",
+      "details": "1. Install Swagger UI Express and Swagger JSDoc:\n```bash\nnpm install --save-dev swagger-ui-express swagger-jsdoc\nnpm install --save-dev @types/swagger-ui-express @types/swagger-jsdoc\n```\n\n2. Create `src/swagger.ts`:\n\n```typescript\nimport swaggerJSDoc from 'swagger-jsdoc';\n\nconst options: swaggerJSDoc.Options = {\n  definition: {\n    openapi: '3.0.0',\n    info: {\n      title: 'User CRUD API',\n      version: '1.0.0',\n      description: 'A simple Express API for managing users',\n    },\n    servers: [\n      {\n        url: 'http://localhost:3000',\n        description: 'Development server',\n      },\n    ],\n  },\n  apis: ['./src/routes/*.ts', './src/models/*.ts'],\n};\n\nexport const swaggerSpec = swaggerJSDoc(options);\n```\n\n3. Update `src/app.ts` to include Swagger UI:\n\n```typescript\nimport express, { Application } from 'express';\nimport swaggerUi from 'swagger-ui-express';\nimport { swaggerSpec } from './swagger';\nimport userRoutes from './routes/userRoutes';\nimport { errorHandler, notFoundHandler } from './middleware/errorHandler';\n\nconst app: Application = express();\n\n// Middleware\napp.use(express.json());\napp.use(express.urlencoded({ extended: true }));\n\n// Swagger documentation\napp.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));\n\n// Routes\napp.get('/', (req, res) => {\n  res.json({ message: 'User CRUD API is running' });\n});\n\napp.use('/api/users', userRoutes);\n\n// Error handling\napp.use(notFoundHandler);\napp.use(errorHandler);\n\nexport default app;\n```\n\n4. Add JSDoc comments to the routes in `src/routes/userRoutes.ts`:\n\n```typescript\nimport { Router } from 'express';\nimport { UserController } from '../controllers/UserController';\nimport { validateUserInput, validateIdParam } from '../middleware/validation';\n\nconst router = Router();\n\n/**\n * @swagger\n * components:\n *   schemas:\n *     User:\n *       type: object\n *       required:\n *         - name\n *         - email\n *       properties:\n *         id:\n *           type: integer\n *           description: The auto-generated id of the user\n *         name:\n *           type: string\n *           description: The name of the user\n *         email:\n *           type: string\n *           description: The email of the user\n *       example:\n *         id: 1\n *         name: John Doe\n *         email: john@example.com\n */\n\n/**\n * @swagger\n * /api/users:\n *   get:\n *     summary: Returns the list of all users\n *     tags: [Users]\n *     responses:\n *       200:\n *         description: The list of users\n *         content:\n *           application/json:\n *             schema:\n *               type: array\n *               items:\n *                 $ref: '#/components/schemas/User'\n */\nrouter.get('/', UserController.getAllUsers);\n\n/**\n * @swagger\n * /api/users/{id}:\n *   get:\n *     summary: Get a user by id\n *     tags: [Users]\n *     parameters:\n *       - in: path\n *         name: id\n *         schema:\n *           type: integer\n *         required: true\n *         description: The user id\n *     responses:\n *       200:\n *         description: The user description by id\n *         content:\n *           application/json:\n *             schema:\n *               $ref: '#/components/schemas/User'\n *       404:\n *         description: The user was not found\n *       400:\n *         description: Invalid ID format\n */\nrouter.get('/:id', validateIdParam, UserController.getUserById);\n\n/**\n * @swagger\n * /api/users:\n *   post:\n *     summary: Create a new user\n *     tags: [Users]\n *     requestBody:\n *       required: true\n *       content:\n *         application/json:\n *           schema:\n *             type: object\n *             required:\n *               - name\n *               - email\n *             properties:\n *               name:\n *                 type: string\n *               email:\n *                 type: string\n *     responses:\n *       201:\n *         description: The user was successfully created\n *         content:\n *           application/json:\n *             schema:\n *               $ref: '#/components/schemas/User'\n *       400:\n *         description: Invalid input data\n */\nrouter.post('/', validateUserInput, UserController.createUser);\n\n// Add similar JSDoc comments for PUT and DELETE endpoints\n\nexport default router;\n```",
+      "testStrategy": "1. Start the server with `npm run dev`\n2. Navigate to http://localhost:3000/api-docs in a web browser\n3. Verify that the Swagger UI loads correctly and displays all API endpoints\n4. Test each endpoint directly from the Swagger UI to ensure they work as expected\n5. Verify that the documentation accurately describes the request/response formats and error cases",
+      "priority": "low",
+      "dependencies": [
+        5
+      ],
+      "status": "done",
+      "subtasks": []
+    },
+    {
+      "id": 12,
+      "title": "Implement Logging and Request Tracking",
+      "description": "Add logging functionality to track API requests, responses, and errors for debugging and monitoring purposes.",
+      "details": "1. Install Morgan for HTTP request logging and Winston for application logging:\n```bash\nnpm install morgan winston\nnpm install --save-dev @types/morgan\n```\n\n2. Create `src/utils/logger.ts`:\n\n```typescript\nimport winston from 'winston';\n\n// Define log format\nconst logFormat = winston.format.combine(\n  winston.format.timestamp(),\n  winston.format.printf(({ level, message, timestamp }) => {\n    return `${timestamp} ${level}: ${message}`;\n  })\n);\n\n// Create logger instance\nconst logger = winston.createLogger({\n  level: process.env.NODE_ENV === 'production' ? 'info' : 'debug',\n  format: logFormat,\n  transports: [\n    // Console transport for all environments\n    new winston.transports.Console(),\n    // File transport for errors\n    new winston.transports.File({ filename: 'logs/error.log', level: 'error' }),\n    // File transport for all logs\n    new winston.transports.File({ filename: 'logs/combined.log' })\n  ],\n});\n\nexport default logger;\n```\n\n3. Create `src/middleware/requestLogger.ts`:\n\n```typescript\nimport morgan from 'morgan';\nimport { Request, Response } from 'express';\nimport logger from '../utils/logger';\n\n// Create a custom token for request ID\nmorgan.token('request-id', (req: Request) => {\n  // Generate a unique request ID if not already present\n  if (!req.headers['x-request-id']) {\n    req.headers['x-request-id'] = `${Date.now()}-${Math.random().toString(36).substring(2, 15)}`;\n  }\n  return req.headers['x-request-id'] as string;\n});\n\n// Create a custom format that includes the request ID\nconst logFormat = ':request-id :method :url :status :res[content-length] - :response-time ms';\n\n// Create a stream object that writes to our Winston logger\nconst stream = {\n  write: (message: string) => {\n    logger.info(message.trim());\n  },\n};\n\n// Export the middleware\nexport const requestLogger = morgan(logFormat, { stream });\n\n// Middleware to add request ID to response headers\nexport const addRequestId = (req: Request, res: Response, next: Function) => {\n  // Generate a unique request ID if not already present\n  if (!req.headers['x-request-id']) {\n    req.headers['x-request-id'] = `${Date.now()}-${Math.random().toString(36).substring(2, 15)}`;\n  }\n  \n  // Add the request ID to the response headers\n  res.setHeader('X-Request-ID', req.headers['x-request-id'] as string);\n  next();\n};\n```\n\n4. Update `src/app.ts` to use the logging middleware:\n\n```typescript\nimport express, { Application } from 'express';\nimport swaggerUi from 'swagger-ui-express';\nimport { swaggerSpec } from './swagger';\nimport userRoutes from './routes/userRoutes';\nimport { errorHandler, notFoundHandler } from './middleware/errorHandler';\nimport { requestLogger, addRequestId } from './middleware/requestLogger';\nimport logger from './utils/logger';\n\nconst app: Application = express();\n\n// Request ID and logging middleware\napp.use(addRequestId);\napp.use(requestLogger);\n\n// Standard middleware\napp.use(express.json());\napp.use(express.urlencoded({ extended: true }));\n\n// Swagger documentation\napp.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));\n\n// Routes\napp.get('/', (req, res) => {\n  logger.debug('Root endpoint accessed');\n  res.json({ message: 'User CRUD API is running' });\n});\n\napp.use('/api/users', userRoutes);\n\n// Error handling\napp.use(notFoundHandler);\napp.use(errorHandler);\n\n// Log when the application starts\napp.on('listening', () => {\n  logger.info(`Server started on port ${process.env.PORT || 3000}`);\n});\n\nexport default app;\n```\n\n5. Update the error handler to use the logger:\n\n```typescript\nimport { Request, Response, NextFunction } from 'express';\nimport logger from '../utils/logger';\n\n// Custom error class for API errors\nexport class ApiError extends Error {\n  statusCode: number;\n  \n  constructor(statusCode: number, message: string) {\n    super(message);\n    this.statusCode = statusCode;\n    this.name = 'ApiError';\n  }\n}\n\n// Error handler middleware\nexport const errorHandler = (err: Error, req: Request, res: Response, next: NextFunction): void => {\n  const requestId = req.headers['x-request-id'] || 'unknown';\n  \n  if (err instanceof ApiError) {\n    logger.warn(`[${requestId}] ${err.name}: ${err.message}`);\n    res.status(err.statusCode).json({\n      error: err.name,\n      message: err.message,\n      requestId\n    });\n    return;\n  }\n  \n  // Log stack trace for unexpected errors\n  logger.error(`[${requestId}] Unhandled error: ${err.message}\\n${err.stack}`);\n  \n  // Default to 500 internal server error for unhandled errors\n  res.status(500).json({\n    error: 'InternalServerError',\n    message: 'An unexpected error occurred',\n    requestId\n  });\n};\n```",
+      "testStrategy": "1. Start the server with `npm run dev`\n2. Make various API requests using tools like Postman or curl\n3. Verify that log entries are created in the console and log files\n4. Check that each request has a unique request ID in the logs and response headers\n5. Trigger errors (e.g., invalid requests) and verify they are properly logged\n6. Verify that different log levels (info, warn, error) are used appropriately",
+      "priority": "low",
+      "dependencies": [
+        3
+      ],
+      "status": "done",
+      "subtasks": []
+    },
+    {
+      "id": 13,
+      "title": "Task #13: Create Development Documentation for Tasks",
+      "description": "Develop comprehensive documentation for all development tasks in the project, providing detailed information about implementation, architecture, and technical decisions for each task.",
+      "details": "This task involves creating standardized development documentation for all tasks in the project. The documentation should include:\n\n1. Purpose and scope of each task\n2. Technical architecture and design decisions\n3. Implementation details including code structure, patterns used, and algorithms\n4. Dependencies between components and external systems\n5. Configuration requirements and environment setup\n6. Known limitations and potential future improvements\n7. Code examples and usage patterns\n8. Troubleshooting guidelines\n\nThe documentation should be created in Markdown format and stored in a dedicated 'docs/development' directory in the repository. Each task should have its own documentation file named according to the convention 'task-XX-short-name.md'.\n\nAdditionally, create a main index document that links to all individual task documentation files and provides an overview of the system architecture. The documentation should be technical in nature and aimed at developers who need to understand, maintain, or extend the codebase.\n\nEnsure that the documentation for Tasks #10, #11, and #12 are prioritized as they represent recent work that needs to be documented while the details are fresh.",
+      "testStrategy": "To verify the completion of this task:\n\n1. Review the documentation structure to ensure it follows the specified format and organization:\n   - Confirm the 'docs/development' directory exists\n   - Verify the main index document is present and links to all task documentation\n   - Check that individual task documentation files follow the naming convention\n\n2. Validate the content quality for each task documentation:\n   - Ensure all required sections (purpose, architecture, implementation, etc.) are included\n   - Verify technical accuracy by cross-referencing with the actual code implementation\n   - Check that code examples are functional and represent actual usage patterns\n\n3. Conduct a peer review process:\n   - Have at least two other developers review the documentation for clarity and completeness\n   - Collect feedback on areas that need improvement or additional details\n\n4. Test the documentation usability:\n   - Ask a developer unfamiliar with a specific task to use only the documentation to understand it\n   - Record any questions or confusion points that arise during this exercise\n   - Update documentation based on this feedback\n\n5. Verify integration with existing documentation:\n   - Ensure the development documentation complements (and doesn't contradict) the API documentation\n   - Check that links between related documentation sections work correctly\n\nThe task is considered complete when all documentation files are created according to the specified structure, peer-reviewed for accuracy and completeness, and successfully tested for usability.",
+      "status": "done",
+      "dependencies": [],
+      "priority": "medium",
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Create Documentation Template and Structure",
+          "description": "Design and implement a standardized documentation template and directory structure for all development tasks.",
+          "dependencies": [],
+          "details": "Create a Markdown template file that includes sections for all required documentation aspects (purpose, architecture, implementation, dependencies, configuration, limitations, examples, troubleshooting). Set up the 'docs/development' directory structure in the repository. Create the main index.md file that will link to all task documentation files and provide system architecture overview.",
+          "status": "done",
+          "testStrategy": "Review the template with senior developers to ensure it captures all necessary information. Verify directory structure follows project conventions."
+        },
+        {
+          "id": 2,
+          "title": "Document Priority Tasks (#10, #11, #12)",
+          "description": "Create comprehensive documentation for the three priority tasks that represent recent work.",
+          "dependencies": [
+            1
+          ],
+          "details": "Using the established template, document Tasks #10, #11, and #12 in detail. Interview developers who worked on these tasks to capture fresh implementation details, architecture decisions, and technical considerations. Name files according to the convention 'task-XX-short-name.md' and place them in the docs/development directory. Update the main index document to include links to these new documentation files.",
+          "status": "done",
+          "testStrategy": "Have the original task implementers review the documentation for accuracy and completeness. Verify all required sections are properly filled out."
+        },
+        {
+          "id": 3,
+          "title": "Document Remaining Tasks and Dependencies",
+          "description": "Create documentation for all other existing tasks in the project, with special focus on dependencies between components.",
+          "dependencies": [
+            1
+          ],
+          "details": "Systematically document all remaining tasks using the template. For each task, analyze the codebase to identify and document dependencies between components and external systems. Create diagrams where necessary to illustrate complex relationships. Ensure configuration requirements and environment setup are thoroughly documented for each task.",
+          "status": "done",
+          "testStrategy": "Use peer reviews to validate the accuracy of dependency documentation. Test environment setup instructions by having a developer follow them on a clean environment."
+        },
+        {
+          "id": 4,
+          "title": "Add Code Examples and Usage Patterns",
+          "description": "Enhance all task documentation with relevant code examples and usage patterns to improve developer understanding.",
+          "dependencies": [
+            2,
+            3
+          ],
+          "details": "For each task documentation file, add practical code examples that demonstrate key functionality, API usage, and common patterns. Include both simple examples and more complex scenarios. Ensure examples follow project coding standards and represent best practices. Add comments within examples to explain key points.",
+          "status": "done",
+          "testStrategy": "Test all code examples to ensure they compile and function as expected. Have developers unfamiliar with specific components review examples for clarity."
+        },
+        {
+          "id": 5,
+          "title": "Finalize Documentation and Create Cross-References",
+          "description": "Review all documentation, add troubleshooting guidelines, and create cross-references between related tasks.",
+          "dependencies": [
+            4
+          ],
+          "details": "Review all documentation for completeness and consistency. Add troubleshooting sections to each task document, covering common issues and their solutions. Create cross-references between related task documentation to help developers understand the bigger picture. Update the main index document with a comprehensive overview of the system architecture, including diagrams if necessary. Ensure all links between documents work correctly.",
+          "status": "done",
+          "testStrategy": "Conduct a full documentation review with the development team. Test navigation between documents to ensure all cross-references work. Have new team members use the documentation to understand the system and provide feedback."
+        }
+      ]
+    }
+  ]
+}
